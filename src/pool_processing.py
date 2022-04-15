@@ -87,12 +87,7 @@ class PoolProcessing:
         #
         #       1      4
         # Obtained by clicking in the image (pool corners)
-        src_points = np.array([[86, 78], [263, 129], [435, 262], [566, 469]])
-
-        # pixels for pool length
-        length = 450
-        ratio = 10 / 25  # assuming pool size of 25 per 10 meters
-        width = length * ratio
+        src_points = np.array([[86, 78], [263, 129], [435, 264], [566, 469]])
 
         dst_points = np.array([[self.__initial_point, self.__initial_point + self.__width],
                                [self.__initial_point, self.__initial_point],
