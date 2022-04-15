@@ -59,8 +59,8 @@ class PoolProcessing:
         cv2.fisheye.calibrate(real_world_points, image_points, self.__dim, self.__matrix, self.__coefficients,
                               flags=calib_flags,  criteria=calib_criteria)
 
-        print("matrix: " + str(self.__matrix.tolist()))
-        print("coefficients:" + str(self.__coefficients.tolist()))
+        # print("matrix: " + str(self.__matrix.tolist()))
+        # print("coefficients:" + str(self.__coefficients.tolist()))
 
     def un_distort(self, image, balance):
 
