@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 
-image_path = "../../../images/pool/img06.jpg"
+image_path = "../../images/pool/img06.jpg"
 image = cv.imread(image_path)
 
 cv.imshow("Image", image)

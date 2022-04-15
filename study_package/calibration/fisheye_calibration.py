@@ -17,7 +17,7 @@ _img_shape = None
 objpoints = []  # 3d point in real world space
 imgpoints = []  # 2d points in image pl
 
-images = glob.glob('../../../images/calibration/*.jpg')
+images = glob.glob('../../images/calibration/*.jpg')
 
 for fname in images:
     img = cv2.imread(fname)

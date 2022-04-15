@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-image_path = "../../../images/pool/img06.jpg"
+image_path = "../../images/pool/img06.jpg"
 img = cv2.imread(image_path)
 
 DIM = (640, 480)
