@@ -1,6 +1,10 @@
 import cv2
 import numpy as np
 
+RED = 2
+GREEN = 1
+BLUE = 0
+
 
 def centroid(hsv_image, image, channel, limits):
     image_channel = image[:, :, channel]
@@ -35,15 +39,11 @@ def get_location_in_image(image):
     # final_red_mask = cv2.bitwise_and(red_mask, red_light_mask)
 
     red_limits = [[(0, 50, 20), (5, 255, 255)], [(175, 50, 20), (180, 255, 255)]]
-    back_point = centroid(hsv_image, image, 2, red_limits)
-
-    # green_channel = image[:, :, 1]
-    # _, green_light_mask = cv2.threshold(green_channel, 150, 255, cv2.THRESH_BINARY)
-    #
-    # green_mask = cv2.inRange(hsv_image, (40, 40, 40), (70, 255, 255))
-    # final_green_mask = cv2.bitwise_and(green_mask, green_light_mask)
+    back_point = centroid(hsv_image, image, RED, red_limits)
 
     green_limits = [[(40, 40, 40), (70, 255, 255)]]
-    front_point = centroid(hsv_image, image, 1, green_limits)
+    front_point = centroid(hsv_image, image, GREEN, green_limits)
+
+    return np.round((back_point + front_point) / 2)
 
     return (back_point + front_point) / 2
