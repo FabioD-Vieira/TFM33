@@ -21,6 +21,15 @@ class PoolProcessing:
         if not self.__dim3:
             self.__dim3 = self.__dim
 
+        # assuming pool size of 25 per 10 meters
+        self.__pool_width = 10
+        self.__pool_length = 25
+        ratio = self.__pool_width / self.__pool_length
+
+        self.__length = 450  # pixels for pool length
+        self.__width = self.__length * ratio
+        self.__initial_point = 80  # top left / margin
+
     def calibrate(self, calibration_images):
 
         pattern = (6, 9)
@@ -74,6 +83,9 @@ class PoolProcessing:
 
     def calculate_homography_matrix(self):
 
+        # Pool: 2      3
+        #
+        #       1      4
         # Obtained by clicking in the image (pool corners)
         src_points = np.array([[86, 78], [263, 129], [435, 262], [566, 469]])
 
@@ -82,11 +94,10 @@ class PoolProcessing:
         ratio = 10 / 25  # assuming pool size of 25 per 10 meters
         width = length * ratio
 
-        initial_point = 80
-
-        dst_points = np.array([[initial_point, initial_point + width], [initial_point, initial_point],
-                               [initial_point + length, initial_point],
-                               [initial_point + length, initial_point + width]])
+        dst_points = np.array([[self.__initial_point, self.__initial_point + self.__width],
+                               [self.__initial_point, self.__initial_point],
+                               [self.__initial_point + self.__length, self.__initial_point],
+                               [self.__initial_point + self.__length, self.__initial_point + self.__width]])
 
         self.__h, _ = cv2.findHomography(src_points, dst_points)
 
