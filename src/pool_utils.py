@@ -23,20 +23,11 @@ def centroid(hsv_image, image, channel, limits):
     final_mask = cv2.bitwise_and(mask, light_mask)
 
     pixels = np.where(final_mask == 255)
-    return np.round(sum(np.stack(pixels, axis=1)) / len(pixels[0]))
+    return sum(np.stack(pixels, axis=1)) / len(pixels[0])
 
 
 def get_location_in_image(image):
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-
-    # red_channel = image[:, :, 2]
-    # _, red_light_mask = cv2.threshold(red_channel, 150, 255, cv2.THRESH_BINARY)
-    #
-    # red_mask1 = cv2.inRange(hsv_image, (0, 50, 20), (5, 255, 255))
-    # red_mask2 = cv2.inRange(hsv_image, (175, 50, 20), (180, 255, 255))
-    #
-    # red_mask = cv2.bitwise_or(red_mask1, red_mask2)
-    # final_red_mask = cv2.bitwise_and(red_mask, red_light_mask)
 
     red_limits = [[(0, 50, 20), (5, 255, 255)], [(175, 50, 20), (180, 255, 255)]]
     back_point = centroid(hsv_image, image, RED, red_limits)
@@ -46,4 +37,18 @@ def get_location_in_image(image):
 
     return np.round((back_point + front_point) / 2)
 
-    return (back_point + front_point) / 2
+
+# red_channel = image[:, :, 2]
+# _, red_light_mask = cv2.threshold(red_channel, 150, 255, cv2.THRESH_BINARY)
+#
+# red_mask1 = cv2.inRange(hsv_image, (0, 50, 20), (5, 255, 255))
+# red_mask2 = cv2.inRange(hsv_image, (175, 50, 20), (180, 255, 255))
+#
+# red_mask = cv2.bitwise_or(red_mask1, red_mask2)
+# final_red_mask = cv2.bitwise_and(red_mask, red_light_mask)
+#
+# green_channel = image[:, :, 1]
+# _, green_light_mask = cv2.threshold(green_channel, 150, 255, cv2.THRESH_BINARY)
+#
+# green_mask = cv2.inRange(hsv_image, (40, 40, 40), (70, 255, 255))
+# final_green_mask = cv2.bitwise_and(green_mask, green_light_mask)
