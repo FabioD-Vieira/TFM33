@@ -28,8 +28,8 @@ reprojected = pool_processing.apply_homography(undistorted)
 
 cv2.imshow("Homography", reprojected)
 
-x, y = pool_processing.get_vessel_info(reprojected)
-print(x, y)
+x, y, angle = pool_processing.get_vessel_info(reprojected)
+print(x, y, angle)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
