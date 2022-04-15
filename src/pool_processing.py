@@ -101,3 +101,9 @@ class PoolProcessing:
 
     def get_vessel_location(self, image):
         location_in_image = pool_utils.get_location_in_image(image)
+
+        location_image_no_margin = location_in_image - self.__initial_point
+        x = location_image_no_margin[1] * self.__pool_length / self.__length
+        y = location_image_no_margin[0] * self.__pool_width / self.__width
+
+        return x, y
