@@ -100,7 +100,8 @@ class PoolProcessing:
         return cv2.warpPerspective(image, self.__h, (image.shape[1], image.shape[0]))
 
     def get_vessel_location(self, image):
-        location_in_image = pool_utils.get_location_in_image(image)
+        back_point, front_point = pool_utils.get_location_in_image(image)
+        location_in_image = np.round((back_point + front_point) / 2)
 
         location_image_no_margin = location_in_image - self.__initial_point
         x = location_image_no_margin[1] * self.__pool_length / self.__length

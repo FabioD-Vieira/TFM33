@@ -35,7 +35,7 @@ def get_location_in_image(image):
     green_limits = [[(40, 40, 40), (70, 255, 255)]]
     front_point = centroid(hsv_image, image, GREEN, green_limits)
 
-    return np.round((back_point + front_point) / 2)
+    return back_point, front_point
 
 
 # red_channel = image[:, :, 2]
