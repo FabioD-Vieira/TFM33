@@ -28,7 +28,7 @@ reprojected = pool_processing.apply_homography(undistorted)
 
 cv2.imshow("Homography", reprojected)
 
-x, y = pool_processing.get_vessel_location(reprojected)
+x, y = pool_processing.get_vessel_info(reprojected)
 print(x, y)
 
 cv2.waitKey(0)

@@ -99,7 +99,7 @@ class PoolProcessing:
     def apply_homography(self, image):
         return cv2.warpPerspective(image, self.__h, (image.shape[1], image.shape[0]))
 
-    def get_vessel_location(self, image):
+    def get_vessel_info(self, image):
         back_point, front_point = pool_utils.get_location_in_image(image)
         location_in_image = np.round((back_point + front_point) / 2)
 
