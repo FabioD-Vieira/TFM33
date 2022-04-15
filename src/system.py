@@ -4,7 +4,7 @@ import numpy as np
 from src import pool_utils
 
 
-class PoolProcessing:
+class System:
 
     def __init__(self):
         self.__dim = (640, 480)

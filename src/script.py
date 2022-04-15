@@ -2,17 +2,17 @@ import glob
 
 import cv2
 
-from src.pool_processing import PoolProcessing
+from src.system import System
 
-pool_processing = PoolProcessing()
+system = System()
 
 images = glob.glob('../images/calibration/*.jpg')
-pool_processing.calibrate(images)  # Called only once to calibrate
+system.calibrate(images)  # Called only once to calibrate
 
 img = cv2.imread("../images/pool/img06_fake_leds.jpg")
 # cv2.imshow("Original", img)
 
-undistorted = pool_processing.un_distort(img, balance=0.9)
+undistorted = system.un_distort(img, balance=0.9)
 # cv2.imshow("Undistorted", undistorted)
 
 
@@ -23,12 +23,12 @@ undistorted = pool_processing.un_distort(img, balance=0.9)
 #
 # cv2.setMouseCallback("Undistorted", print_coordinates)
 
-pool_processing.calculate_homography_matrix()  # Called only once as well
-reprojected = pool_processing.apply_homography(undistorted)
+system.calculate_homography_matrix()  # Called only once as well
+reprojected = system.apply_homography(undistorted)
 
 cv2.imshow("Homography", reprojected)
 
-x, y, angle = pool_processing.get_vessel_info(reprojected)
+x, y, angle = system.get_vessel_info(reprojected)
 print(x, y, angle)
 
 cv2.waitKey(0)
