@@ -2,17 +2,19 @@ import glob
 
 import cv2
 
+from src.camera import Camera
 from src.system import System
 
 system = System()
+camera = Camera()
 
 images = glob.glob('../images/calibration/*.jpg')
-system.calibrate(images)  # Called only once to calibrate
+camera.calibrate(images)  # Called only once to calibrate
 
 img = cv2.imread("../images/pool/img06_fake_leds.jpg")
 # cv2.imshow("Original", img)
 
-undistorted = system.un_distort(img, balance=0.9)
+undistorted = camera.un_distort(img, balance=0.9)
 # cv2.imshow("Undistorted", undistorted)
 
 
