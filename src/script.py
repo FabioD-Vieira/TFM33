@@ -10,10 +10,10 @@ images = glob.glob('../images/calibration/*.jpg')
 pool_processing.calibrate(images)  # Called only once to calibrate
 
 img = cv2.imread("../images/pool/img06_fake_leds.jpg")
-cv2.imshow("Original", img)
+# cv2.imshow("Original", img)
 
 undistorted = pool_processing.un_distort(img, balance=0.9)
-cv2.imshow("Undistorted", undistorted)
+# cv2.imshow("Undistorted", undistorted)
 
 
 # def print_coordinates(event, x_coord, y_coord, _, _1):
