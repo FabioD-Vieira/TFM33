@@ -6,7 +6,7 @@ RED = 2
 GREEN = 1
 BLUE = 0
 
-image_path = "../images/pool.jpeg"
+image_path = "../../../images/pool.jpeg"
 image = cv2.imread(image_path)
 image = cv2.resize(image, (0, 0), fx=0.3, fy=0.3)
 

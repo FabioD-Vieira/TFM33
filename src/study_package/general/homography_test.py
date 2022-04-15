@@ -6,14 +6,14 @@ RED = 2
 GREEN = 1
 BLUE = 0
 
-image_path = "../images/pool.jpeg"
+image_path = "../../../images/pool.jpeg"
 image = cv2.imread(image_path)
 image = cv2.resize(image, (0, 0), fx=0.3, fy=0.3)
 
 cv2.imshow("original", image)
 
 
-def print_coords(event, x, y, flag, params):
+def print_coordinates(event, x, y, flag, params):
     if event == cv2.EVENT_LBUTTONDBLCLK:
         print(x, y)
 
@@ -21,7 +21,7 @@ def print_coords(event, x, y, flag, params):
 src_points = np.array([[9, 241], [543, 214], [210, 44], [416, 44]])
 dst_points = np.array([[60, 381], [540, 381], [60, 70], [540, 70]])
 
-cv2.setMouseCallback("original", print_coords)
+cv2.setMouseCallback("original", print_coordinates)
 h, status = cv2.findHomography(src_points, dst_points)
 im_out = cv2.warpPerspective(image, h, (image.shape[1], image.shape[0]))
 

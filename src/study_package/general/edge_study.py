@@ -5,7 +5,7 @@ RED = 2
 GREEN = 1
 BLUE = 0
 
-image_path = "../images/pool.jpeg"
+image_path = "../../../images/pool.jpeg"
 image = cv2.imread(image_path)
 
 image_red_channel = image[:, :, RED]
