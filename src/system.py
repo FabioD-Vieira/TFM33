@@ -38,9 +38,11 @@ class System:
         gradient_reprojected[:, :, 1] *= (self.__length - 1)
         gradient_reprojected[:, :, 2] *= (self.__width - 1)
 
+        gradient_reprojected = np.round(gradient_reprojected).astype(int)
+
         for x in range(len(gradient_reprojected)):
             for y in range(len(gradient_reprojected[x])):
-                self.__lut[x][y] = np.round(gradient_reprojected[x][y]).astype(int)
+                self.__lut[x][y] = gradient_reprojected[x][y]
 
     def process(self, image):
         new_image = np.array(image, dtype=np.uint8)

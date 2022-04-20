@@ -46,12 +46,13 @@ gradient_undistorted = camera.un_distort(gradient, 0.9)
 gradient_reprojected = system.apply_homography(gradient_undistorted)
 gradient_reprojected[:, :, 1] *= 479
 gradient_reprojected[:, :, 2] *= 639
+gradient_reprojected = np.round(gradient_reprojected).astype(int)
 
 lut = np.zeros([480, 640, 3], dtype=np.float32)
 lut2 = np.zeros([480, 640, 3], dtype=np.float32)
 for x in range(len(gradient_reprojected)):
     for y in range(len(gradient_reprojected[x])):
-        pix = np.round(gradient_reprojected[x][y]).astype(int)
+        pix = gradient_reprojected[x][y]
 
         lut[pix[1]][[pix[2]]] = gradient[x][y]
         lut2[x][y] = pix
@@ -65,10 +66,9 @@ lut2 = lut2.astype(int)
 new_img2 = np.zeros([480, 640, 3], dtype=np.uint8)
 for x in range(len(lut2)):
     for y in range(len(lut2[x])):
-        _, row, column = lut2[x][y]
-        new_img2[x][y] = img[row][column]
+        _, i, j = lut2[x][y]
+        new_img2[x][y] = img[i][j]
 
-# print(new_img)
 cv2.imshow("lut2 new image", new_img2)
 
 # new_lut = np.array((lut*255), dtype=np.uint8)
