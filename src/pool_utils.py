@@ -25,6 +25,10 @@ def centroid(hsv_image, image, channel, limits):
     final_mask = cv2.bitwise_and(mask, light_mask)
 
     pixels = np.where(final_mask == 255)
+
+    if len(pixels[0]) == 0:
+        return
+
     return sum(np.stack(pixels, axis=1)) / len(pixels[0])
 
 
