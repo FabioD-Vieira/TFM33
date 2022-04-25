@@ -47,7 +47,7 @@ def get_location_in_image(image):
 def get_orientation(back_point, front_point):
 
     angle_radians = math.atan2(front_point[1] - back_point[1], front_point[0] - back_point[0])
-    angle_degrees = -(math.degrees(angle_radians) - 90)
+    angle_degrees = math.degrees(angle_radians)
 
     return angle_degrees
 
