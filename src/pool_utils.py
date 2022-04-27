@@ -1,68 +1,65 @@
 import math
 
 import cv2
-import numpy as np
 
 RED = 2
 GREEN = 1
 BLUE = 0
 
 
-def centroid(hsv_image, image, channel, limits):
-    image_channel = image[:, :, channel]
+def get_points(image):
 
-    _, light_mask = cv2.threshold(image_channel, 150, 255, cv2.THRESH_BINARY)
-
-    previous_mask = None
-    mask = None
-    for limit in limits:
-        lower_limit, upper_limit = limit
-
-        mask = cv2.inRange(hsv_image, lower_limit, upper_limit)
-        previous_mask = cv2.bitwise_or(previous_mask, mask) if previous_mask is not None else mask
-
-    mask = previous_mask if previous_mask is not None else mask
-    final_mask = cv2.bitwise_and(mask, light_mask)
-
-    pixels = np.where(final_mask == 255)
-
-    if len(pixels[0]) == 0:
-        return
-
-    return sum(np.stack(pixels, axis=1)) / len(pixels[0])
-
-
-def get_location_in_image(image):
+    # RED
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    mask_1 = cv2.inRange(hsv_image, (0, 50, 20), (5, 255, 255))
+    mask_2 = cv2.inRange(hsv_image, (170, 50, 20), (180, 255, 255))
+    red_mask = cv2.bitwise_or(mask_1, mask_2)
 
-    red_limits = [[(0, 50, 20), (5, 255, 255)], [(175, 50, 20), (180, 255, 255)]]
-    back_point = centroid(hsv_image, image, RED, red_limits)
+    # Light
+    image_channel = image[:, :, RED]
+    _, light_mask = cv2.threshold(image_channel, 80, 255, cv2.THRESH_BINARY)
 
-    green_limits = [[(40, 40, 40), (70, 255, 255)]]
-    front_point = centroid(hsv_image, image, GREEN, green_limits)
+    final_red_mask = cv2.bitwise_and(red_mask, light_mask)
 
-    return back_point, front_point
+    contours, hierarchy = cv2.findContours(final_red_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    point_a, point_b, point_c = [sum(contour) / len(contour) for contour in contours]
 
-
-def get_orientation(back_point, front_point):
-
-    angle_radians = math.atan2(front_point[1] - back_point[1], front_point[0] - back_point[0])
-    angle_degrees = math.degrees(angle_radians)
-
-    return angle_degrees
+    return point_a[0], point_b[0], point_c[0]
 
 
-# red_channel = image[:, :, 2]
-# _, red_light_mask = cv2.threshold(red_channel, 150, 255, cv2.THRESH_BINARY)
-#
-# red_mask1 = cv2.inRange(hsv_image, (0, 50, 20), (5, 255, 255))
-# red_mask2 = cv2.inRange(hsv_image, (175, 50, 20), (180, 255, 255))
-#
-# red_mask = cv2.bitwise_or(red_mask1, red_mask2)
-# final_red_mask = cv2.bitwise_and(red_mask, red_light_mask)
-#
-# green_channel = image[:, :, 1]
-# _, green_light_mask = cv2.threshold(green_channel, 150, 255, cv2.THRESH_BINARY)
-#
-# green_mask = cv2.inRange(hsv_image, (40, 40, 40), (70, 255, 255))
-# final_green_mask = cv2.bitwise_and(green_mask, green_light_mask)
+def get_coordinates(point_a, point_b, point_c):
+    return sum([point_a, point_b, point_c]) / 3
+
+
+def get_orientation(point_a, point_b, point_c, x, y):
+
+    distance_a_b = math.sqrt((point_a[0] - point_b[0]) ** 2 + (point_a[1] - point_b[1]) ** 2)
+    distance_a_c = math.sqrt((point_a[0] - point_c[0]) ** 2 + (point_a[1] - point_c[1]) ** 2)
+    distance_c_b = math.sqrt((point_c[0] - point_b[0]) ** 2 + (point_c[1] - point_b[1]) ** 2)
+
+    if distance_a_b < distance_a_c and distance_a_b < distance_c_b:
+        back = point_c
+    elif distance_a_c < distance_a_b and distance_a_c < distance_c_b:
+        back = point_b
+    else:
+        back = point_a
+
+    return math.degrees(math.atan2(y - back[1], x - back[0])) + 90
+
+
+def get_vessel_info(image):
+
+    point_a, point_b, point_c = get_points(image)
+
+    # point_a = np.array([200, 10])
+    # point_b = np.array([200, 50])
+    # point_c = np.array([50, 30])
+    #
+    # image[point_a[0]][point_a[1]] = (255, 255, 255)
+    # image[point_b[0]][point_b[1]] = (255, 255, 255)
+    # image[point_c[0]][point_c[1]] = (255, 255, 255)
+
+    x, y = get_coordinates(point_a, point_b, point_c)
+    angle = get_orientation(point_a, point_b, point_c, x, y)
+
+    return x, y, angle
