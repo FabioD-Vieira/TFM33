@@ -14,8 +14,9 @@ camera = Camera()
 images = glob.glob('../images/calibration/*.jpg')
 camera.calibrate(images)  # Called only once to calibrate
 
-img = cv2.imread("../images/pool/img06.jpg")
+img = cv2.imread("../../images/pool/img06.jpg")
 undistorted = camera.un_distort(img, balance=0.9)
+cv2.imshow("und", undistorted)
 
 top_vector = math.sqrt((435 - 263)**2 + (264 - 129)**2) / 25
 bottom_vector = math.sqrt((566 - 86)**2 + (469 - 78)**2) / 25
@@ -59,3 +60,6 @@ axis.invert_yaxis()
 # axis.set_yticklabels(row_labels, minor=False)
 
 plt.show()
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()

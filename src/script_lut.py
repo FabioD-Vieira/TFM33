@@ -16,9 +16,6 @@ new_image = system.process(img)
 
 cv2.imshow("new_image", new_image)
 
-x, y, angle = system.get_vessel_info(new_image)
-print(x, y, angle)
-
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()

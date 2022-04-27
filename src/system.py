@@ -13,18 +13,19 @@ class System:
         self.__h = None
 
         # assuming pool size of 25 per 10 meters
-        self.__pool_width = 10
-        self.__pool_length = 25
-        # ratio = self.__pool_width / self.__pool_length
+        self.__pool_length = 10
+        self.__pool_width = 25
+        ratio = self.__pool_length / self.__pool_width
 
         self.__width = 640
-        self.__length = 480  # self.__width * ratio
+        # self.__length = 480
+        self.__length = np.round(self.__width * ratio).astype(int)
         self.__initial_point = 0  # top left / margin
 
         self.__gradient_image = np.zeros([self.__length, self.__width, 3], dtype=np.float32)
         for i in range(len(self.__gradient_image)):
             for j in range(len(self.__gradient_image[i])):
-                self.__gradient_image[i][j] = (1, i/(self.__length-1), j/(self.__width-1))
+                self.__gradient_image[i][j] = (1, i / (self.__length - 1), j / (self.__width - 1))
 
         self.__lut = np.zeros([self.__length, self.__width, 3], dtype=np.uint)
 
@@ -54,13 +55,14 @@ class System:
 
         return new_image
 
-    def calculate_homography_matrix(self):
+    def calculate_homography_matrix(self, src_points=None):
 
         # Pool: 2      3
         #
         #       1      4
         # Obtained by clicking in the image (pool corners)
-        src_points = np.array([[86, 78], [263, 129], [435, 264], [566, 469]])
+        if src_points is None:
+            src_points = np.array([[86, 78], [263, 129], [435, 264], [566, 469]])
 
         dst_points = np.array([[self.__initial_point, self.__initial_point + self.__length],
                                [self.__initial_point, self.__initial_point],
@@ -75,20 +77,13 @@ class System:
     def __get_coordinates(self, location_in_image):
         location_image_no_margin = location_in_image - self.__initial_point
 
-        x = location_image_no_margin[1] * self.__pool_length / self.__width
-        y = location_image_no_margin[0] * self.__pool_width / self.__length
+        x = location_image_no_margin[0] * self.__pool_width / self.__width
+        y = location_image_no_margin[1] * self.__pool_length / self.__length
 
         return x, y
 
     def get_vessel_info(self, image):
-        back_point, front_point = pool_utils.get_location_in_image(image)
+        x, y, angle = pool_utils.get_vessel_info(image)
+        world_x, world_y = self.__get_coordinates(np.array([x, y]))
 
-        if back_point is None or front_point is None:
-            return None, None, None
-
-        location_in_image = np.round((back_point + front_point) / 2)
-
-        x, y = self.__get_coordinates(location_in_image)
-        angle = pool_utils.get_orientation(back_point, front_point)
-
-        return x, y, angle
+        return world_x, world_y, angle
