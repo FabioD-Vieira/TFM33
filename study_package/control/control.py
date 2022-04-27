@@ -1,33 +1,33 @@
-import glob
-
-import cv2
 import numpy as np
-
-from src.camera import Camera
-from src.system import System
-
-system = System()
-camera = Camera()
-
-images = glob.glob('../../images/calibration/*.jpg')
-camera.calibrate(images)
-
-img = cv2.imread("../../images/pool/img06.jpg")
-undistorted = camera.un_distort(img, balance=.9)
-cv2.imshow("Undistorted", undistorted)
+from matplotlib import pyplot as plt
+from numpy import sin, cos, pi, linspace
 
 
-system.calculate_homography_matrix()
-reprojected = system.apply_homography(undistorted)
+radius = np.round(3 * 640 / 25).astype(int)
 
-cv2.imshow("Homography", reprojected)
 
-radius = np.round(3*640/25).astype(int)
+# draw arc
+plt.xlim(0, 640)
+plt.ylim(0, 480)
+plt.gca().set_aspect('equal')
 
-circle_img = cv2.circle(reprojected, (319, 128), radius, (0, 0, 255))
-cv2.imshow("img_circle", circle_img)
+arc_angles = linspace(0 * pi, 2 * pi, 20)
+arc_xs = (radius * cos(arc_angles)) + 320
+arc_ys = (radius * sin(arc_angles)) + 240
 
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+plt.plot(arc_xs, arc_ys, color='red', lw=3)
 
+vessel_x = 250
+vessel_y = 100
+
+plt.plot([vessel_x], [vessel_y], marker="o", markersize=2, markeredgecolor="blue")
+
+circle_points = np.stack((arc_xs, arc_ys), axis=1)
+
+vessel_point = (vessel_x, vessel_y)
+dist = np.sqrt(np.sum((circle_points - vessel_point)**2, axis=1))
+
+sorted_indexes = np.argsort(dist)
+
+plt.show()
 
