@@ -51,8 +51,6 @@ class System:
     def process(self, image):
         new_image = np.array(image, dtype=np.uint8)
 
-        print(self.__lut[0][0])
-
         for x in range(len(self.__lut)):
             for y in range(len(self.__lut[x])):
                 _, row, column = self.__lut[x][y]
