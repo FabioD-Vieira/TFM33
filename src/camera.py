@@ -4,8 +4,10 @@ import numpy as np
 
 class Camera:
 
-    def __init__(self):
-        self.__dim = (640, 480)
+    def __init__(self, res, balance):
+        self.__dim = res
+        self.__balance = balance
+
         self.__coefficients = None
         self.__matrix = None
 
@@ -17,6 +19,9 @@ class Camera:
             self.__dim2 = self.__dim
         if not self.__dim3:
             self.__dim3 = self.__dim
+
+    def dim(self):
+        return self.__dim
 
     def calibrate(self, calibration_images):
 
@@ -59,10 +64,11 @@ class Camera:
         # print("matrix: " + str(self.__matrix.tolist()))
         # print("coefficients:" + str(self.__coefficients.tolist()))
 
-    def un_distort(self, image, balance):
+    def un_distort(self, image):
 
         new_matrix = cv2.fisheye.estimateNewCameraMatrixForUndistortRectify(self.__matrix, self.__coefficients,
-                                                                            self.__dim2, np.eye(3), balance=balance)
+                                                                            self.__dim2, np.eye(3),
+                                                                            balance=self.__balance)
 
         map1, map2 = cv2.fisheye.initUndistortRectifyMap(self.__matrix, self.__coefficients, np.eye(3),
                                                          new_matrix, self.__dim3, cv2.CV_16SC2)
