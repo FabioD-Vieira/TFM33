@@ -53,6 +53,9 @@ for x in range(len(lut2)):
         _, i, j = lut2[x][y]
         new_img2[x][y] = img[i][j]
 
+# print(lut2[0][0])
+# print(img[44][205])
+# print(new_img2[0][0])
 cv2.imshow("lut2 new image", new_img2)
 
 cv2.waitKey(0)
