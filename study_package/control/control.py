@@ -6,8 +6,11 @@ from matplotlib import pyplot as plt
 from numpy import sin, cos, pi, linspace
 
 
-radius = np.round(3 * 640 / 25).astype(int)
+vessel_x = 250
+vessel_y = 100
+vessel_orientation = 45
 
+radius = np.round(3 * 640 / 25).astype(int)
 
 # draw arc
 plt.xlim(0, 640)
@@ -22,10 +25,6 @@ arc_xs = (radius * cos(arc_angles)) + Cx
 arc_ys = (radius * sin(arc_angles)) + Cy
 
 plt.plot(arc_xs, arc_ys, color='red', lw=3)
-
-vessel_x = 250
-vessel_y = 100
-
 plt.plot([vessel_x], [vessel_y], marker="o", markersize=2, markeredgecolor="blue")
 
 circle_points = np.stack((arc_xs, arc_ys), axis=1)
@@ -38,82 +37,77 @@ min_error_index = np.argmin(distances)
 points = np.roll(circle_points, -min_error_index, axis=0)
 # errors = np.roll(distances, -min_error_index)
 
-# for point in points:
-#     plt.plot([Cx, point[0]], [Cy, point[1]], color='green', lw=3)
-#
-#     vector = point - [Cx, Cy]
-#     theta = np.deg2rad(90)
-#     # new_x = vector[0] * cos(theta) - vector[1] * sin(theta)
-#     # new_y = vector[0] * sin(theta) + vector[1] * cos(theta)
-#     rot = np.array([[cos(theta), -sin(theta)], [sin(theta), cos(theta)]])
-#     vector2 = np.dot(rot, vector)
-#     new_x, new_y = vector2
-#
-#     plt.plot([point[0] - new_x, point[0] + new_x], [point[1] - new_y, point[1] + new_y], color='green', lw=3)
-#
-#     unit_vector_1 = vector / np.linalg.norm(vector)
-#     unit_vector_2 = vector2 / np.linalg.norm(vector2)
-#     dot_product = np.dot(unit_vector_1, unit_vector_2)
-#     angle = np.arccos(dot_product)
-#     print(np.rad2deg(angle))
 
-point_index = 0
-plt.plot([Cx, points[point_index][0]], [Cy, points[point_index][1]], color='green', lw=3)
-
-vector = points[point_index] - [Cx, Cy]
 theta = np.deg2rad(90)
-# new_x = vector[0] * cos(theta) - vector[1] * sin(theta)
-# new_y = vector[0] * sin(theta) + vector[1] * cos(theta)
 rot = np.array([[cos(theta), -sin(theta)], [sin(theta), cos(theta)]])
-vector2 = np.dot(rot, vector)
-new_x, new_y = vector2
+perpendicular_vectors = points - [Cx, Cy]
 
-plt.plot([points[point_index][0] - new_x, points[point_index][0] + new_x], [points[point_index][1] - new_y, points[point_index][1] + new_y], color='green', lw=3)
+target_orientations = np.zeros(len(points))
+for i in range(len(perpendicular_vectors)):
+    vector = np.dot(rot, perpendicular_vectors[i])
+    target_orientations[i] = -math.degrees(math.atan2(vector[1], vector[0]))
 
-unit_vector_1 = vector / np.linalg.norm(vector)
-unit_vector_2 = vector2 / np.linalg.norm(vector2)
-dot_product = np.dot(unit_vector_1, unit_vector_2)
-angle = np.arccos(dot_product)
-print(np.rad2deg(angle))
+debug = 0
+plt.plot([Cx, points[debug][0]], [Cy, points[debug][1]], color='green', lw=3)
 
-threshold = 1
+vector2 = np.dot(rot, perpendicular_vectors[debug])
 
-current_index = 0
+angle = -math.degrees(math.atan2(vector2[1], vector2[0]))
+# print(angle)
+
+plt.plot([points[debug][0] - vector2[0], points[debug][0] + vector2[0]],
+         [points[debug][1] - vector2[1], points[debug][1] + vector2[1]], color='green', lw=3)
+
+
+position_threshold = 1
+orientation_threshold = 1
+
 previous_position_error = 0
+previous_orientation_error = 0
+
 previous_time = perf_counter_ns()
 
-KP = 0.1
-KD = 0.1
+position_KP = 0.1
+position_KD = 0.1
 
+orientation_KP = 0.1
+orientation_KD = 0.1
+
+current_index = 0
 while True:
-    # error = errors[current_index]
-    target_position = points[current_index]
-
-    position_error = target_position - vessel_point
-    # print(target_vector)
-
     time_delta = perf_counter_ns() - previous_time
 
-    derivative = (position_error - previous_position_error) / time_delta
+    # error = errors[current_index]
+    target_position = points[current_index]
+    position_error = target_position - vessel_point
+
+    position_derivative = (position_error - previous_position_error) / time_delta
     previous_position_error = position_error
 
-    output = KP * position_error + KD * derivative
-    # print("Output: " + str(output))
+    position_output = position_KP * position_error + position_KD * position_derivative
 
     # TODO code to update vessel position
 
-    error_norm = math.sqrt(position_error[0]**2 + position_error[1]**2)
-    # print("Error norm: " + str(error_norm))
-    error_norm = 0  # to debug
-    if error_norm < threshold:
+    target_orientation = target_orientations[current_index]
+    orientation_error = target_orientation - vessel_orientation
+
+    orientation_derivative = (orientation_error - previous_orientation_error) / time_delta
+    previous_orientation_error = orientation_error
+
+    angle_output = orientation_KP * orientation_error + orientation_KD * orientation_derivative
+
+    # TODO code to update vessel orientation
+
+    position_error_norm = math.sqrt(position_error[0]**2 + position_error[1]**2)
+
+    position_error_norm = 0  # to debug
+    orientation_error = 0  # to debug
+
+    if position_error_norm < position_threshold and orientation_error < orientation_threshold:
         current_index += 1
 
     if current_index == len(points):
         # current_index = 0  # to reset behaviour
         break
-
-    distances = np.sqrt(np.sum((circle_points - vessel_point) ** 2, axis=1))
-    points = np.roll(circle_points, -min_error_index, axis=0)
-
 
 plt.show()
