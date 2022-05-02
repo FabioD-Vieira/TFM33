@@ -64,9 +64,8 @@ class PDControl:
             self.__points_orientations[i] = math.degrees(math.atan2(vector[0], vector[1]))
 
     def __get_position_output(self, vessel_point, time_delta):
-        print(vessel_point)
+
         target_position = self.__sorted_points[self.__current_index]
-        print(target_position)
         self.__position_error = target_position - vessel_point
 
         position_derivative = (self.__position_error - self.__previous_position_error) / time_delta
@@ -107,5 +106,5 @@ class PDControl:
         if self.__current_index == len(self.__sorted_points):
             self.__current_index = 0
 
-        print(position_output)
+        print(position_output)  # y = height = index 0, x = width = index 1
         print(orientation_output)

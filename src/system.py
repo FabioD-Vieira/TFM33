@@ -39,8 +39,6 @@ class System:
 
         self.__control.get_output(x, y, angle)
 
-        reprojected[np.round(y).astype(int)][np.round(x).astype(int)] = (0, 0, 255)
-
         cv2.imshow("reprojected", reprojected)
 
     def __get_coordinates(self, x, y):
