@@ -1,15 +1,13 @@
 import cv2
 import numpy as np
 
-from src.homography import Homography
-
 
 class LUT:
-    def __init__(self, camera, pool_dim):
+    def __init__(self, camera, homography):
         self.__camera = camera
         self.__cam_width, self.__cam_height = self.__camera.dim()
 
-        self.__homography = Homography(self.__cam_width, self.__cam_height, pool_dim)
+        self.__homography = homography
 
         self.__lut = np.zeros([self.__cam_height, self.__cam_width, 3], dtype=np.uint)
 

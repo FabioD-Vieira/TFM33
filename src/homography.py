@@ -6,13 +6,11 @@ from src import math_utils
 
 class Homography:
 
-    def __init__(self, width, height, pool_dim):
+    def __init__(self, width, height):
         self.__h = None
 
         self.__width = width
-        # self.__length = height
-        ratio = pool_dim[1] / pool_dim[0]
-        self.__length = np.round(self.__width * ratio).astype(int)
+        self.__length = height
 
         self.__size = 60
         self.__bottom = 310  # 280 - 330
