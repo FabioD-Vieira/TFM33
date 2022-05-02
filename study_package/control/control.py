@@ -81,6 +81,7 @@ orientation_KD = 0.1
 current_index = 0
 while True:
     time_delta = perf_counter_ns() - previous_time
+    previous_time = time_delta
 
     # error = errors[current_index]
     target_position = points[current_index]
