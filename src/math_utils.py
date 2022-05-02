@@ -3,6 +3,9 @@ import numpy as np
 
 def calculate_intersection_point(lines):
 
+    if len(lines) != 2:
+        raise Exception("Pool corners not detected")
+
     ax, ay, bx, by = lines[0][0]
     m1 = (by - ay) / (bx - ax)
     b1 = ay - (m1 * ax)
