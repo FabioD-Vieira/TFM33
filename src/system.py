@@ -1,6 +1,7 @@
+import cv2
 import numpy as np
 
-from src import pool_utils
+from src import pool
 from src.camera import Camera
 from src.lut import LUT
 
@@ -21,16 +22,21 @@ class System:
         self.__lut.generate_lut(img)
 
     def process(self, image):
-        return self.__lut.apply_lut(image)
+        reprojected = self.__lut.apply_lut(image)
 
-    def __get_coordinates(self, location_in_image):
-        x = location_in_image[0] * self.__pool_dim[2] / self.__cam_width
-        y = location_in_image[1] * self.__pool_dim[1] / self.__cam_height
+        x, y, angle = pool.get_vessel_info(reprojected)
+        x, y = self.__get_coordinates(x, y)
+
+        print(x, y, angle)
+
+    def __get_coordinates(self, x, y):
+        x *= (self.__pool_dim[0] / self.__cam_width)
+        y *= (self.__pool_dim[1] / self.__cam_height)
 
         return x, y
 
     def get_vessel_info(self, image):
-        x, y, angle = pool_utils.get_vessel_info(image)
+        x, y, angle = pool.get_vessel_info(image)
         world_x, world_y = self.__get_coordinates(np.array([x, y]))
 
         return world_x, world_y, angle
