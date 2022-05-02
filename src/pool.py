@@ -28,8 +28,7 @@ def __get_points(image):
 
     contours, hierarchy = cv2.findContours(final_red_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-    if len(contours) < 3:
-        raise Exception("No vessel detected")
+    assert len(contours) == 3, "No vessel detected"
 
     point_a, point_b, point_c = [sum(contour) / len(contour) for contour in contours]
     return point_a[0], point_b[0], point_c[0]
