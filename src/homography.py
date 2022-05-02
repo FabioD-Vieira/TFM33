@@ -49,7 +49,7 @@ class Homography:
 
         # Top left
         corner = self.__get_corner_section(image, self.__top, self.__top_left)
-        lines = self.__find_pool_outline(corner, binary_threshold=5, hough_threshold=40, min_length=30, max_gap=10)
+        lines = self.__find_pool_outline(corner, binary_threshold=15, hough_threshold=30, min_length=30, max_gap=10)
         bx, by = math_utils.calculate_intersection_point(lines)
 
         by = np.round(by).astype(int) + self.__top - self.__size
