@@ -5,20 +5,25 @@ import numpy as np
 from matplotlib import pyplot as plt
 from numpy import sin, cos, pi, linspace
 
+ratio = 10 / 25
+
+width = 640
+height = 480
+height = np.round(width * ratio).astype(int)
 
 vessel_x = 250
 vessel_y = 100
 vessel_orientation = 45
 
-radius = np.round(3 * 640 / 25).astype(int)
+radius = np.round(3 * width / 25).astype(int)
 
 # draw arc
 plt.xlim(0, 640)
 plt.ylim(0, 480)
 # plt.gca().set_aspect('equal')
 
-Cx = 320
-Cy = 240
+Cx = width / 2
+Cy = height / 2
 
 arc_angles = linspace(0 * pi, 2 * pi, 20)
 arc_xs = (radius * cos(arc_angles)) + Cx
