@@ -1,80 +1,79 @@
 import cv2
 import numpy as np
 
-from src import math_utils
-
 
 class Homography:
 
-    def __init__(self, width, height):
+    def __init__(self, camera_resolution):
+        self.__width, self.__height = camera_resolution
         self.__h = None
 
-        self.__width = width
-        self.__length = height
+        self.__base_corners = [(199, 192), (195, 454), (324, 37), (320, 638)]
 
-        self.__size = 60
-        self.__bottom = 310  # 280 - 330
-        self.__top = 220  # 190 - 250
-
-        self.__top_left = 190
-        self.__top_right = 450
-
-        self.__bottom_left = 60
-        self.__bottom_right = 610
+        self.__sift = cv2.SIFT_create(contrastThreshold=0.01, edgeThreshold=10)
+        self.__bf = cv2.BFMatcher()
 
         self.__RED = 2
 
-    def __find_pool_outline(self, corner, binary_threshold, hough_threshold, min_length, max_gap):
-        image_red_channel = corner[:, :, self.__RED]
+    def __find_difference(self, corner_base_img, corner_img):
 
-        _, image_binary = cv2.threshold(image_red_channel, binary_threshold, 255, cv2.THRESH_BINARY)
-        canny = cv2.Canny(image_binary, 100, 200)
+        kp1, des1 = self.__sift.detectAndCompute(corner_base_img[:, :, 2], None)
+        kp2, des2 = self.__sift.detectAndCompute(corner_img[:, :, 2], None)
 
-        return cv2.HoughLinesP(canny, 1, np.pi / 180, hough_threshold, minLineLength=min_length, maxLineGap=max_gap)
+        matches = self.__bf.knnMatch(des1, des2, k=2)
 
-    def __get_corner_section(self, img, y, x):
-        return img[y - self.__size:y + self.__size, x - self.__size:x + self.__size]
+        ratio_dist = 0.5
+        vector = np.array([0, 0], dtype='float')
+        number_of_features = 0
+        for m, n in matches:
+            # Apply ratio test
+            if m.distance < ratio_dist * n.distance:
+                (x1, y1) = kp1[m.queryIdx].pt
+                (x2, y2) = kp2[m.trainIdx].pt
 
-    def __calculate_source_points(self, image):
+                vector += np.array([x2 - x1, y2 - y1])
+                number_of_features += 1
 
-        # Bottom left
-        corner = self.__get_corner_section(image, self.__bottom, self.__bottom_left)
-        lines = self.__find_pool_outline(corner, binary_threshold=5, hough_threshold=30, min_length=40, max_gap=10)
-        ax, ay = math_utils.calculate_intersection_point(lines)
+        # good = [[m] for m, n in matches if m.distance < ratio_dist * n.distance]
+        # img3 = cv2.drawMatchesKnn(corner_base_img, kp1, corner_img, kp2, good, None,
+        #                           flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+        #
+        # cv2.imshow("match", img3)
 
-        ay = np.round(ay).astype(int) + self.__bottom - self.__size
-        ax = np.round(ax).astype(int) + self.__bottom_left - self.__size
+        vector = vector / number_of_features
+        vector_x, vector_y = np.round(vector).astype(int)
+
+        return vector_y, vector_x
+
+    def __calculate_source_points(self, base_image, image):
 
         # Top left
-        corner = self.__get_corner_section(image, self.__top, self.__top_left)
-        lines = self.__find_pool_outline(corner, binary_threshold=15, hough_threshold=30, min_length=30, max_gap=10)
-        bx, by = math_utils.calculate_intersection_point(lines)
-
-        by = np.round(by).astype(int) + self.__top - self.__size
-        bx = np.round(bx).astype(int) + self.__top_left - self.__size
+        vector_y, vector_x = self.__find_difference(base_image[150:250, 150:250], image[150:250, 150:250])
+        i, j = self.__base_corners[0]
+        ay, ax = i + vector_y, j + vector_x
 
         # Top right
-        corner = self.__get_corner_section(image, self.__top, self.__top_right)
-        lines = self.__find_pool_outline(corner, binary_threshold=30, hough_threshold=30, min_length=30, max_gap=10)
-        cx, cy = math_utils.calculate_intersection_point(lines)
+        vector_y, vector_x = self.__find_difference(base_image[150:250, 400:500], image[150:250, 400:500])
+        i, j = self.__base_corners[1]
+        by, bx = i + vector_y, j + vector_x
 
-        cy = np.round(cy).astype(int) + self.__top - self.__size
-        cx = np.round(cx).astype(int) + self.__top_right - self.__size
+        # Bottom left
+        vector_y, vector_x = self.__find_difference(base_image[275:375, 0:100], image[275:375, 0:100])
+        i, j = self.__base_corners[2]
+        cy, cx = i + vector_y, j + vector_x
 
         # Bottom right
-        corner = self.__get_corner_section(image, self.__bottom, self.__bottom_right)
-        lines = self.__find_pool_outline(corner, binary_threshold=30, hough_threshold=40, min_length=30, max_gap=10)
-        dx, dy = math_utils.calculate_intersection_point(lines)
-
-        dy = np.round(dy).astype(int) + self.__bottom - self.__size
-        dx = np.round(dx).astype(int) + self.__bottom_right - self.__size
+        vector_y, vector_x = self.__find_difference(base_image[270:370, 540:640], image[270:370, 540:640])
+        i, j = self.__base_corners[3]
+        dy, dx = i + vector_y, j + vector_x
 
         return np.array([[ax, ay], [bx, by], [cx, cy], [dx, dy]])
 
-    def calculate_homography_matrix(self, image):
+    def calculate_homography_matrix(self, base_image, image):
 
-        src = self.__calculate_source_points(image)
-        dst = np.array([[0, self.__length - 1], [0, 0], [self.__width - 1, 0], [self.__width - 1, self.__length - 1]])
+        src = self.__calculate_source_points(base_image, image)
+        dst = np.array([[0, 0], [self.__width - 1, 0],
+                        [0, self.__height - 1], [self.__width - 1, self.__height - 1]])
 
         self.__h, _ = cv2.findHomography(src, dst)
 

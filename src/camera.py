@@ -4,8 +4,8 @@ import numpy as np
 
 class Camera:
 
-    def __init__(self, res, balance):
-        self.__dim = res
+    def __init__(self, resolution, balance):
+        self.__dim = resolution
         self.__balance = balance
 
         self.__coefficients = None
@@ -36,9 +36,8 @@ class Camera:
         corner_flags = cv2.CALIB_CB_ADAPTIVE_THRESH + cv2.CALIB_CB_FAST_CHECK + cv2.CALIB_CB_NORMALIZE_IMAGE
         corner_criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.1)
 
-        for image_name in calibration_images:
-            img = cv2.imread(image_name)
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        for image in calibration_images:
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
             ret, corners = cv2.findChessboardCorners(gray, pattern, flags=corner_flags)
 
@@ -49,7 +48,7 @@ class Camera:
 
                 # Draw corners
                 # cv2.drawChessboardCorners(img, pattern, corners, ret)
-                # cv2.imshow('img', img)
+                # cv2.imshow('img', image)
                 # cv2.waitKey(500)
 
         self.__matrix = np.zeros((3, 3))
