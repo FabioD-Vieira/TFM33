@@ -30,6 +30,7 @@ class Camera:
         real_world_points = []
         image_points = []
 
+        # Create points to be used as real world references
         points = np.zeros((1, pattern[0] * pattern[1], 3), np.float32)
         points[0, :, :2] = np.mgrid[0:pattern[0], 0:pattern[1]].T.reshape(-1, 2)
 
@@ -39,8 +40,11 @@ class Camera:
         for image in calibration_images:
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
+            # find chessboard pattern in each calibration image
             ret, corners = cv2.findChessboardCorners(gray, pattern, flags=corner_flags)
 
+            # if corners were found, add reference points to real world references
+            # and refines corners before adding them as image references
             if ret:
                 real_world_points.append(points)
                 cv2.cornerSubPix(gray, corners, (3, 3), (-1, -1), corner_criteria)
@@ -51,12 +55,14 @@ class Camera:
                 # cv2.imshow('img', image)
                 # cv2.waitKey(500)
 
+        # Initialize variables
         self.__matrix = np.zeros((3, 3))
         self.__coefficients = np.zeros((4, 1))
 
         calib_flags = cv2.fisheye.CALIB_RECOMPUTE_EXTRINSIC + cv2.fisheye.CALIB_CHECK_COND + cv2.fisheye.CALIB_FIX_SKEW
         calib_criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 1e-6)
 
+        # Update matrix and coefficient variables with calibration
         cv2.fisheye.calibrate(real_world_points, image_points, self.__dim, self.__matrix, self.__coefficients,
                               flags=calib_flags,  criteria=calib_criteria)
 
@@ -64,6 +70,8 @@ class Camera:
         # print("coefficients:" + str(self.__coefficients.tolist()))
 
     def un_distort(self, image):
+
+        # Apply matrix and coefficients found to un distort an image
 
         new_matrix = cv2.fisheye.estimateNewCameraMatrixForUndistortRectify(self.__matrix, self.__coefficients,
                                                                             self.__dim2, np.eye(3),
