@@ -1,6 +1,7 @@
 import math
 
 import numpy as np
+from sklearn.neighbors import NearestNeighbors
 
 from src.shape.shape import Shape
 
@@ -30,9 +31,13 @@ class Circle(Shape):
 
     def sort_points(self, vessel_point):
 
-        distances = np.sqrt(np.sum((self._points - vessel_point) ** 2, axis=1))
+        # Find the closest point index
+        knn = NearestNeighbors(n_neighbors=1)
+        knn.fit(self._points)
 
-        self._min_error_index = np.argmin(distances)
+        self._min_error_index = knn.kneighbors([vessel_point], return_distance=False)[0][0]
+
+        # Roll the array in order to have the closest point has the first element
         self._sorted_points = np.roll(self._points, -self._min_error_index, axis=0)
 
     def calculate_points_orientations(self):
