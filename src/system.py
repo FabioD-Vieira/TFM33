@@ -15,7 +15,7 @@ class System:
         self.__pool_dim = pool_dim
 
         self.homography = Homography(self.__camera.dim())
-        self.__lut = LUT(self.__camera, self.homography, pool_dim)
+        self.__lut = LUT(self.__camera, self.homography)
 
         self.__control = control
 
@@ -27,7 +27,7 @@ class System:
 
     def process(self, image):
         x, y, angle = PoolUtils.get_vessel_info(image)
-        x, y = self.__lut.apply_lut(int(np.round(y)), int(np.round(x)))
+        x, y = self.__lut.apply(int(np.round(y)), int(np.round(x)))
 
         x *= self.__pool_dim[0]
         y *= self.__pool_dim[1]
