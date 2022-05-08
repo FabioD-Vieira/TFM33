@@ -12,18 +12,18 @@ class PoolUtils:
     @staticmethod
     def __get_points(image):
 
-        # RED
+        # Find RED color in image
         hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         red_mask = cv2.inRange(hsv_image, (0, 80, 20), (20, 255, 255))
         # red_mask = cv2.inRange(hsv_image, (170, 50, 20), (190, 255, 255))
         # red_mask = cv2.bitwise_or(mask_1, mask_2)
 
-        # Light
+        # Find LIGHT in image
         image_channel = image[:, :, RED]
         _, light_mask = cv2.threshold(image_channel, 100, 255, cv2.THRESH_BINARY)
 
+        # Join both masks and find LED contours
         mask = cv2.bitwise_and(red_mask, light_mask)
-
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         # Detecting a single point because test images only have a single LED rectangle
@@ -38,10 +38,13 @@ class PoolUtils:
 
     @staticmethod
     def __find_back_and_front(point_a, point_b, point_c):
+
+        # Distance between each point
         distance_a_b = math.sqrt((point_a[0] - point_b[0]) ** 2 + (point_a[1] - point_b[1]) ** 2)
         distance_a_c = math.sqrt((point_a[0] - point_c[0]) ** 2 + (point_a[1] - point_c[1]) ** 2)
         distance_c_b = math.sqrt((point_c[0] - point_b[0]) ** 2 + (point_c[1] - point_b[1]) ** 2)
 
+        # Two closest points belong to the front
         if distance_a_b < distance_a_c and distance_a_b < distance_c_b:
             front = point_a, point_b
             back = point_c
