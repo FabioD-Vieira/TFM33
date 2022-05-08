@@ -8,6 +8,7 @@ from src.control.pd_control import PDControl
 from src.shape.circle import Circle
 from src.system import System
 
+# Initializations
 camera_resolution = (640, 480)
 pool_dim = (25, 10)
 
@@ -19,14 +20,13 @@ control = PControl(circle, position_threshold=1, orientation_threshold=1)
 
 system = System(camera, control, pool_dim)
 
+# Calibrate system for the camera
 images = glob.glob('../images/calibration/*.jpg')
 system.calibrate_camera([cv2.imread(image_name) for image_name in images])
 
 print("Finished setup")
 
-# img = cv2.imread("../images/pool/pool.jpeg")
-# img = cv2.imread("../images/pool/pool_leds.jpeg")
-
+# Generate LUT to speed up process
 base_image = cv2.imread("../images/corners/POS4_5_4000_01.jpg")
 img = cv2.imread("../images/corners/POS4_5_4000_02.jpg")
 # img = cv2.imread("../images/leds/img01.jpg")
@@ -40,6 +40,7 @@ except AssertionError as e:
     raise
 
 
+# System process
 img = cv2.imread("../images/leds/img13.jpg")
 try:
     system.process(img)
@@ -51,7 +52,6 @@ except AssertionError as e:
 
 print()
 print("Finished")
-# print(num)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
