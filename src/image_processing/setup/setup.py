@@ -1,14 +1,10 @@
-import numpy as np
-
-from src.control.control import Control
-from src.homography import Homography
-from src.lut import LUT
-from src.pool_utils import PoolUtils
+from src.image_processing.setup.homography import Homography
+from src.image_processing.setup.lut import LUT
 
 
-class System:
+class Setup:
 
-    def __init__(self, camera, control: Control, pool_dim):
+    def __init__(self, camera, pool_dim):
         self.__camera = camera
         self.__cam_width, self.__cam_height = self.__camera.dim()
 
@@ -17,24 +13,13 @@ class System:
         self.homography = Homography(self.__camera.dim())
         self.__lut = LUT(self.__camera, self.homography)
 
-        self.__control = control
-
     def calibrate_camera(self, calibration_images):
         self.__camera.calibrate(calibration_images)
 
     def generate_lut(self, base_image, img):
-        self.__lut.generate_lut(base_image, img)
+        return self.__lut.generate_lut(base_image, img)
 
-    def process(self, image):
-        x, y, angle = PoolUtils.get_vessel_info(image)
-        x, y = self.__lut.apply(int(np.round(y)), int(np.round(x)))
-
-        x *= self.__pool_dim[0]
-        y *= self.__pool_dim[1]
-
-        self.__control.get_output(x, y, angle)
-
-    # def process2(self, img):
+    # def process(self, img):
     #     undistorted = self.__camera.un_distort(img)
     #     rotated = cv2.rotate(undistorted, cv2.ROTATE_180)
     #

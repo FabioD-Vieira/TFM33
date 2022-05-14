@@ -10,40 +10,43 @@ class LUT:
 
         self.__homography = homography
 
-        self.__lut = np.zeros([self.__cam_height, self.__cam_width, 3], dtype=np.float32)
+    # Compute homography matrix using a known image (base_image)
+    # and a new image obtain from the camera
+    def __calculate_homography_matrix(self, base_image, image):
 
-    def generate_lut(self, base_image, img):
-
-        # Compute homography matrix using a known image (base_image)
-        # and a new image obtain from the camera
         base_undistorted = self.__camera.un_distort(base_image)
         base_rotated = cv2.rotate(base_undistorted, cv2.ROTATE_180)
 
-        undistorted = self.__camera.un_distort(img)
+        undistorted = self.__camera.un_distort(image)
         rotated = cv2.rotate(undistorted, cv2.ROTATE_180)
 
         self.__homography.calculate_homography_matrix(base_rotated, rotated)
 
-        # Created normalized image with each pixel value corresponding to a position: (1, i/479, j/639)
+    # Created normalized image with each pixel value corresponding to a position: (1, i/479, j/639)
+    def __create_normalized_image(self):
+
         normalized_image = np.zeros([self.__cam_height, self.__cam_width, 3], dtype=np.float32)
         for i in range(len(normalized_image)):
             for j in range(len(normalized_image[i])):
                 normalized_image[i][j] = (1, i / (self.__cam_height - 1), j / (self.__cam_width - 1))
 
-        # Apply the same transformations
+        return normalized_image
+
+    # Apply the same transformations
+    def __apply_image_transformations(self, normalized_image):
+
         normalized_undistorted = self.__camera.un_distort(normalized_image)
         normalized_rotated = cv2.rotate(normalized_undistorted, cv2.ROTATE_180)
         normalized_reprojected = self.__homography.apply_homography(normalized_rotated)
 
-        # Transforms pixel values in positions
-        normalized_reprojected[:, :, 1] *= (self.__cam_height - 1)
-        normalized_reprojected[:, :, 2] *= (self.__cam_width - 1)
-        normalized_reprojected = np.round(normalized_reprojected).astype(int)
+        return normalized_reprojected
+
+    # create LUT by associating each position to a value (position) of the normalized image
+    def __create_lut(self, normalized_reprojected, normalized_image):
 
         # LUT to reconstruct final image perfectly
         # diff_lut = np.zeros([self.__cam_height, self.__cam_width, 3], dtype=np.uint)
 
-        # create LUT by associating each position to a value (position) of the normalized image
         lut = np.zeros([self.__cam_height, self.__cam_width, 3], dtype=np.float32)
         for x in range(len(normalized_reprojected)):
             for y in range(len(normalized_reprojected[x])):
@@ -53,7 +56,23 @@ class LUT:
                 # diff_lut[x][y] = normalized_reprojected[x][y]
 
         kernel = np.ones((3, 3), np.float32)
-        self.__lut = cv2.morphologyEx(lut, cv2.MORPH_CLOSE, kernel)
+        lut = cv2.morphologyEx(lut, cv2.MORPH_CLOSE, kernel)
+
+        return lut
+
+    def generate_lut(self, base_image, img):
+
+        self.__calculate_homography_matrix(base_image, img)
+
+        normalized_image = self.__create_normalized_image()
+        normalized_reprojected = self.__apply_image_transformations(normalized_image)
+
+        # Transforms pixel values in positions
+        normalized_reprojected[:, :, 1] *= (self.__cam_height - 1)
+        normalized_reprojected[:, :, 2] *= (self.__cam_width - 1)
+        normalized_reprojected = np.round(normalized_reprojected).astype(int)
+
+        lut = self.__create_lut(normalized_reprojected, normalized_image)
 
         # Reconstruct image badly with normal LUT
         # reconstruct_image_badly(img, self.__lut)
@@ -61,9 +80,7 @@ class LUT:
         # Reconstruct image perfectly with different LUT
         # reconstruct_image_perfectly(img, diff_lut)
 
-    def apply(self, i, j):
-        pix = self.__lut[i][j]
-        return pix[2], pix[1]
+        return lut
 
 
 def __reconstruct_image_badly(image, lut):

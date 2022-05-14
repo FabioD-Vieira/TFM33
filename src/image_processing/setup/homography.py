@@ -9,7 +9,7 @@ class Homography:
         self.__h = None
 
         # base image pool corners
-        self.__base_corners = [(199, 192), (195, 454), (324, 37), (320, 638)]
+        self.__base_corners = [(199, 192), (195, 454), (318, 51), (313, 622)]
 
         self.__sift = cv2.SIFT_create(contrastThreshold=0.01, edgeThreshold=10)
         self.__bf = cv2.BFMatcher()
