@@ -3,7 +3,7 @@ import math
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
 
-from src.shape.shape import Shape
+from src.vessel_control.shape.shape import Shape
 
 
 class Circle(Shape):
