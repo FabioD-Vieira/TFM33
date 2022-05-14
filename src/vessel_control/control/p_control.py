@@ -8,7 +8,7 @@ class PControl(Control):
         super().__init__(shape, position_threshold, orientation_threshold)
 
         self.__initial_orientation_KP = 0.1
-        self.__position_KP = 0.1
+        self.__position_KP = 0.01
         self.__orientation_KP = 0.1
 
     # def _get_initial_orientation_output(self, vessel_point, vessel_orientation):
@@ -20,6 +20,11 @@ class PControl(Control):
     #     initial_orientation_error = vector_orientation - vessel_orientation
     #
     #     return self.__initial_orientation_KP * initial_orientation_error
+
+    def get_y_output(self, y, target_y):
+
+        y_error = target_y - y
+        return self.__position_KP * y_error
 
     def _get_position_output(self, vessel_point):
 
