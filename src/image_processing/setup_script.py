@@ -28,5 +28,7 @@ np.save("lut", lut)
 
 print("LUT generated")
 
+# setup.process(base_image, img)
+
 # cv2.waitKey(0)
 # cv2.destroyAllWindows()

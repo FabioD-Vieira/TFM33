@@ -3,8 +3,8 @@ import glob
 import cv2
 import numpy as np
 
-from src.camera import Camera
-from src.system import System
+from src.image_processing.setup import Camera
+from src.image_processing.setup.setup import Setup
 
 
 def corner_1(corner_img_1, corner_img_2):
@@ -51,7 +51,7 @@ pool_dim = (25, 10)
 
 camera = Camera(camera_resolution, balance=0.9)
 
-system = System(camera, pool_dim)
+system = Setup(camera, pool_dim)
 
 images = glob.glob('../../images/calibration/*.jpg')
 system.calibrate_camera([cv2.imread(image_name) for image_name in images])

@@ -3,10 +3,10 @@ import glob
 import cv2
 import numpy as np
 
-from src.camera import Camera
-from src.system import System
+from src.image_processing.setup import Camera
+from src.image_processing.setup.setup import Setup
 
-system = System(camera_resolution=(640, 480), camera_balance=0.9)
+system = Setup(camera_resolution=(640, 480), camera_balance=0.9)
 camera = Camera(res=(640, 480), balance=0.9)
 
 images = glob.glob('../../images/calibration/*.jpg')

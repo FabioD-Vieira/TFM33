@@ -5,10 +5,10 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.camera import Camera
-from src.system import System
+from src.image_processing.setup import Camera
+from src.image_processing.setup.setup import Setup
 
-system = System()
+system = Setup()
 camera = Camera()
 
 images = glob.glob('../images/calibration/*.jpg')

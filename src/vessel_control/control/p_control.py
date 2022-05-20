@@ -26,16 +26,16 @@ class PControl(Control):
         y_error = target_y - y
         return self.__position_KP * y_error
 
-    def _get_position_output(self, vessel_point):
-
-        target_position = self._shape.get_sorted_points(vessel_point)[self._current_index]
-        self._position_error = target_position - vessel_point
-
-        return self.__position_KP * self._position_error
-
-    def _get_orientation_output(self, vessel_orientation):
-
-        point_orientation = self._shape.get_points_orientations()[self._current_index]
-        self._orientation_error = point_orientation - vessel_orientation
-
-        return self.__orientation_KP * self._orientation_error
+    # def _get_position_output(self, vessel_point):
+    #
+    #     target_position = self._shape.get_sorted_points(vessel_point)[self._current_index]
+    #     self._position_error = target_position - vessel_point
+    #
+    #     return self.__position_KP * self._position_error
+    #
+    # def _get_orientation_output(self, vessel_orientation):
+    #
+    #     point_orientation = self._shape.get_points_orientations()[self._current_index]
+    #     self._orientation_error = point_orientation - vessel_orientation
+    #
+    #     return self.__orientation_KP * self._orientation_error
