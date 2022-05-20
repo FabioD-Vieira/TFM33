@@ -127,7 +127,8 @@ while True:
     AV = AV_power
     angle_diff = target_angle - angle
 
-    d = math.sqrt((target_point[0] - x)**2 + (target_point[1] - y)**2)
+    # d = math.sqrt((target_point[0] - x)**2 + (target_point[1] - y)**2)
+    d = target_point[1]
     D = d + K_angle * angle_diff
 
     AC = KP_position * D
