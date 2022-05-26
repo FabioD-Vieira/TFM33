@@ -55,7 +55,7 @@ arc_center = (7, 2)
 arc_xs = (radius * np.cos(arc_angles)) + arc_center[0]
 arc_ys = (radius * np.sin(arc_angles)) + arc_center[1]
 
-plt.plot(arc_xs, arc_ys, color='red', lw=3)
+# plt.plot(arc_xs, arc_ys, color='red', lw=3)
 
 convex_arc = np.stack((arc_xs, arc_ys), axis=1)
 
@@ -69,24 +69,28 @@ for i in range(len(vectors_to_center)):
     convex_points_orientations[i] = math.degrees(math.atan2(vector[1], vector[0])) - 180
 
 # Create line
-target_angle = 5
+target_angle = 0
 line_size = 10
 
-line_start_x, line_start_y = (5, 5)
+line_start_x, line_start_y = (0, 5)
 
-line_end_x = line_start_x + math.cos(math.radians(target_angle)) * line_size
-line_end_y = line_start_y + math.sin(math.radians(target_angle)) * line_size
+line_end_x = line_start_x + math.cos(math.radians(target_angle)) * 25
+line_end_y = line_start_y + math.sin(math.radians(target_angle)) * 10
 
 line_x = np.linspace(line_start_x, line_end_x, number_of_points)
 line_y = np.linspace(line_start_y, line_end_y, number_of_points)
+
+plt.plot(line_x, line_y, color='red', lw=3)
 
 line = np.stack((line_x, line_y), axis=1)
 
 
 # Read data
-x, y = (10, 5.5)
-# angle = -5
+x, y = 3, 5
+angle = 0
+
 plt.plot([x], [y], marker="o", markersize=2, markeredgecolor="blue")
+
 
 # Find the closest point
 knn = NearestNeighbors(n_neighbors=1)
@@ -95,16 +99,7 @@ knn.fit(line)
 # knn.fit(convex_arc)
 
 min_error_index = knn.kneighbors([(x, y)], return_distance=False)[0][0]
-target_point = line[min_error_index]
-
-# target_point = concave_arc[min_error_index]
-# target_angle = concave_points_orientations[min_error_index]
-
-# target_point = convex_arc[min_error_index]
-# target_angle = convex_points_orientations[min_error_index]
-
-# print(min_error_index)
-# print(target_point, target_angle)
+current_index = min_error_index
 
 # Gains
 K_angle = 0.1
@@ -113,8 +108,17 @@ KP_position = 0.1
 while True:
 
     # Read data
-    x, y = (2, 7)
-    angle = -5
+    # x, y = (10, 5.5)
+    # angle = -5
+
+    min_error_index = knn.kneighbors([(x, y)], return_distance=False)[0][0]
+    target_point = line[min_error_index]
+
+    # target_point = concave_arc[min_error_index]
+    # target_angle = concave_points_orientations[min_error_index]
+
+    # target_point = convex_arc[min_error_index]
+    # target_angle = convex_points_orientations[min_error_index]
 
     if x < 2 or x > 10 or y < 2 or y > 8:
         AV = 0
@@ -124,14 +128,20 @@ while True:
         print("Stopping...")
         break
 
+    target = (round(target_point[0], 2), round(target_point[1], 2))
+
+    error_vector = (target[0] - x, target[1] - y)
+    d = math.sqrt((error_vector[0] ** 2) + (error_vector[1] ** 2))
+
     AV = AV_power
-    angle_diff = target_angle - angle
 
-    # d = math.sqrt((target_point[0] - x)**2 + (target_point[1] - y)**2)
-    d = target_point[1]
-    D = d + K_angle * angle_diff
+    orientation_diff = abs(target_angle - angle)
 
+    D = d + K_angle * orientation_diff
     AC = KP_position * D
+
+    if error_vector[1] > 0:
+        AC = -AC
 
     if AC > AC_max_power:
         AC = AC_max_power
@@ -139,8 +149,8 @@ while True:
     elif AC < -AC_max_power:
         AC = -AC_max_power
 
-    left_engine = AV + AC
-    right_engine = AV - AC
+    left_engine = AV - AC
+    right_engine = AV + AC
 
     print(left_engine, right_engine)
 
