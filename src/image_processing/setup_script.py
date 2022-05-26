@@ -18,15 +18,19 @@ images = glob.glob('../../images/calibration/*.jpg')
 setup.calibrate_camera([cv2.imread(image_name) for image_name in images])
 
 print("Finished setup")
+print()
 
 # Generate LUT to speed up process
 base_image = cv2.imread("../../images/corners/POS4_5_4000_01.jpg")
 img = cv2.imread("../../images/corners/POS4_5_4000_02.jpg")  # This image is read from the camera
 
-lut = setup.generate_lut(base_image, img)
-np.save("lut", lut)
+try:
+    lut = setup.generate_lut(base_image, img)
+    np.save("lut", lut)
 
-print("LUT generated")
+    print("LUT generated")
+except AssertionError as e:
+    print(e)
 
 # setup.process(base_image, img)
 

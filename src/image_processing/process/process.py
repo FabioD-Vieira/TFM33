@@ -22,6 +22,7 @@ class Process:
     def start(self):
 
         for i in range(30):
+            # read from camera
             image = cv2.imread("../../images/leds/img13_leds.jpg")
 
             try:

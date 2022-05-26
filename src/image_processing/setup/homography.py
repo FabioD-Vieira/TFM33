@@ -24,6 +24,8 @@ class Homography:
 
         matches = self.__bf.knnMatch(des1, des2, k=2)
 
+        assert len(matches[0]) == 2, "Failed to calculate source points: No matches found"
+
         ratio_dist = 0.5
         vector = np.array([0, 0], dtype='float')
         number_of_features = 0
@@ -43,6 +45,8 @@ class Homography:
         #                           flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
         #
         # cv2.imshow("match", img3)
+
+        assert number_of_features != 0, "Failed to calculate source points: No good matches"
 
         # vector mean
         vector = vector / number_of_features
