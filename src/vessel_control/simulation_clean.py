@@ -33,7 +33,7 @@ def draw_vessel(pos, orientation):
 number_of_checkpoints = 10000
 
 line_init = (0, 5)
-line_angle = 5
+line_angle = 0
 
 line_end_x = line_init[0] + math.cos(math.radians(line_angle)) * pool_dim[0]
 line_end_y = line_init[1] + math.sin(math.radians(line_angle)) * pool_dim[1]
@@ -89,6 +89,11 @@ while running:
     clock.tick(FPS)
     screen.fill((0, 0, 255))
 
+    draw_vessel(vessel_pos, vessel_orientation)
+    draw_line()
+
+    pygame.display.update()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -98,18 +103,22 @@ while running:
                 paused = not paused
 
     if not paused:
+
+        if vessel_pos[0] < 2 or vessel_pos[0] > 10 or vessel_pos[1] < 2 or vessel_pos[1] > 8:
+            continue
+
         min_error_index = knn.kneighbors([vessel_pos], return_distance=False)[0][0]
         target_point = line[min_error_index]
 
         target = (round(target_point[0], 2), round(target_point[1], 2))
 
-        draw_vessel(vessel_pos, vessel_orientation)
-        draw_line()
-
         error_vector = (target[0] - vessel_pos[0], target[1] - vessel_pos[1])
         d = math.sqrt((error_vector[0] ** 2) + (error_vector[1] ** 2))
 
         orientation_diff = abs(line_angle - vessel_orientation)
+
+        if orientation_diff > 40:
+            continue
 
         D = d + K_orientation * orientation_diff
         AC = KP_position * D
@@ -123,5 +132,3 @@ while running:
         right_engine = AV + AC
 
         vessel_pos, vessel_orientation = update_vessel(vessel_pos, vessel_orientation, left_engine, right_engine)
-
-        pygame.display.update()

@@ -21,52 +21,52 @@ plt.gca().set_aspect('equal')
 # Variables to create line/circle
 number_of_points = 1000
 
-radius = 3
+# radius = 3
 
 # Matrix to rotate 90 degrees
-theta = np.deg2rad(90)
-rot = np.array([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
+# theta = np.deg2rad(90)
+# rot = np.array([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
 
 
 # Create concave curve
-arc_angles = np.linspace(np.pi, 1.5 * np.pi, number_of_points)
-
-arc_center = (11, 6)
-arc_xs = (radius * np.cos(arc_angles)) + arc_center[0]
-arc_ys = (radius * np.sin(arc_angles)) + arc_center[1]
-
-# plt.plot(arc_xs, arc_ys, color='red', lw=3)
-
-concave_arc = np.stack((arc_xs, arc_ys), axis=1)
-
-# Calculate vectors to the center of the circle
-vectors_to_center = concave_arc - [arc_center[0], arc_center[1]]
-
-# Calculate tangent vector of each circle point by rotating 90º each vector to the center
-concave_points_orientations = np.zeros(len(concave_arc))
-for i in range(len(vectors_to_center)):
-    vector = np.dot(rot, vectors_to_center[i])
-    concave_points_orientations[i] = math.degrees(math.atan2(vector[1], vector[0]))
+# arc_angles = np.linspace(np.pi, 1.5 * np.pi, number_of_points)
+#
+# arc_center = (11, 6)
+# arc_xs = (radius * np.cos(arc_angles)) + arc_center[0]
+# arc_ys = (radius * np.sin(arc_angles)) + arc_center[1]
+#
+# # plt.plot(arc_xs, arc_ys, color='red', lw=3)
+#
+# concave_arc = np.stack((arc_xs, arc_ys), axis=1)
+#
+# # Calculate vectors to the center of the circle
+# vectors_to_center = concave_arc - [arc_center[0], arc_center[1]]
+#
+# # Calculate tangent vector of each circle point by rotating 90º each vector to the center
+# concave_points_orientations = np.zeros(len(concave_arc))
+# for i in range(len(vectors_to_center)):
+#     vector = np.dot(rot, vectors_to_center[i])
+#     concave_points_orientations[i] = math.degrees(math.atan2(vector[1], vector[0]))
 
 # Create convex curve
-arc_angles = np.linspace(0.5 * np.pi, 0 * np.pi, number_of_points)
-
-arc_center = (7, 2)
-arc_xs = (radius * np.cos(arc_angles)) + arc_center[0]
-arc_ys = (radius * np.sin(arc_angles)) + arc_center[1]
-
-# plt.plot(arc_xs, arc_ys, color='red', lw=3)
-
-convex_arc = np.stack((arc_xs, arc_ys), axis=1)
-
-# Calculate vectors to the center of the circle
-vectors_to_center = convex_arc - [arc_center[0], arc_center[1]]
-
-# Calculate tangent vector of each circle point by rotating 90º each vector to the center
-convex_points_orientations = np.zeros(len(convex_arc))
-for i in range(len(vectors_to_center)):
-    vector = np.dot(rot, vectors_to_center[i])
-    convex_points_orientations[i] = math.degrees(math.atan2(vector[1], vector[0])) - 180
+# arc_angles = np.linspace(0.5 * np.pi, 0 * np.pi, number_of_points)
+#
+# arc_center = (7, 2)
+# arc_xs = (radius * np.cos(arc_angles)) + arc_center[0]
+# arc_ys = (radius * np.sin(arc_angles)) + arc_center[1]
+#
+# # plt.plot(arc_xs, arc_ys, color='red', lw=3)
+#
+# convex_arc = np.stack((arc_xs, arc_ys), axis=1)
+#
+# # Calculate vectors to the center of the circle
+# vectors_to_center = convex_arc - [arc_center[0], arc_center[1]]
+#
+# # Calculate tangent vector of each circle point by rotating 90º each vector to the center
+# convex_points_orientations = np.zeros(len(convex_arc))
+# for i in range(len(vectors_to_center)):
+#     vector = np.dot(rot, vectors_to_center[i])
+#     convex_points_orientations[i] = math.degrees(math.atan2(vector[1], vector[0])) - 180
 
 # Create line
 target_angle = 0
@@ -126,7 +126,7 @@ while True:
 
         # send info to vessel
         print("Stopping...")
-        break
+        continue
 
     target = (round(target_point[0], 2), round(target_point[1], 2))
 
@@ -136,6 +136,9 @@ while True:
     AV = AV_power
 
     orientation_diff = abs(target_angle - angle)
+
+    if orientation_diff > 40:
+        continue
 
     D = d + K_angle * orientation_diff
     AC = KP_position * D
