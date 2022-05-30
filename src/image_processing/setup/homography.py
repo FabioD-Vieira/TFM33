@@ -90,4 +90,4 @@ class Homography:
         self.__h, _ = cv2.findHomography(src, dst)
 
     def apply_homography(self, image):
-        return cv2.warpPerspective(image, self.__h, (image.shape[1], image.shape[0]))
+        return cv2.warpPerspective(image, self.__h, (self.__width, self.__height))
