@@ -4,6 +4,10 @@ import numpy as np
 import pygame
 from sklearn.neighbors import NearestNeighbors
 
+pygame.font.init()
+font = pygame.font.Font('freesansbold.ttf', 28)
+text = font.render('P Control', True, (255, 255, 255))
+
 (width, height) = (640, 480)
 screen = pygame.display.set_mode((width, height))
 FPS = 30
@@ -33,7 +37,7 @@ def draw_vessel(pos, orientation):
 number_of_checkpoints = 1000
 
 line_init = (0, 5)
-line_angle = 0
+line_angle = 10
 
 line_end_x = line_init[0] + math.cos(math.radians(line_angle)) * pool_dim[0]
 line_end_y = line_init[1] + math.sin(math.radians(line_angle)) * pool_dim[1]
@@ -87,6 +91,7 @@ paused = False
 while running:
     clock.tick(FPS)
     screen.fill((0, 0, 255))
+    screen.blit(text, (0, 0))
 
     draw_vessel(vessel_pos, vessel_orientation)
     draw_line()

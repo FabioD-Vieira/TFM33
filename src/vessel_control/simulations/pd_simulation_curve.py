@@ -4,6 +4,10 @@ import numpy as np
 import pygame
 from sklearn.neighbors import NearestNeighbors
 
+pygame.font.init()
+font = pygame.font.Font('freesansbold.ttf', 28)
+text = font.render('PD Control', True, (255, 255, 255))
+
 (width, height) = (640, 480)
 screen = pygame.display.set_mode((width, height))
 FPS = 30
@@ -105,6 +109,7 @@ paused = False
 while running:
     clock.tick(FPS)
     screen.fill((0, 0, 255))
+    screen.blit(text, (0, 0))
 
     draw_vessel(vessel_pos, vessel_orientation)
     draw_curve()
