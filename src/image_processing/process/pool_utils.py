@@ -11,10 +11,11 @@ BLUE = 0
 class PoolUtils:
 
     def __init__(self):
-        self.__last_positions = np.zeros((5, 2))
-        self.__last_orientations = np.zeros(5)
+        self.__number_of_samples = 10
+        self.__last_positions = np.zeros((self.__number_of_samples, 2))
+        self.__last_orientations = np.zeros(self.__number_of_samples)
 
-        self.__size = 0
+        self.__current_size = 0
 
     @staticmethod
     def get_points(image):
@@ -68,10 +69,10 @@ class PoolUtils:
         point = (x, y)
         angle = math.degrees(math.atan2(front[1] - back[1], front[0] - back[0]))
 
-        if self.__size < 5:
-            self.__last_positions[self.__size] = point
-            self.__last_orientations[self.__size] = angle
-            self.__size += 1
+        if self.__current_size < self.__number_of_samples:
+            self.__last_positions[self.__current_size] = point
+            self.__last_orientations[self.__current_size] = angle
+            self.__current_size += 1
 
         else:
             self.__last_positions = np.roll(self.__last_positions, -1, axis=0)
@@ -80,7 +81,7 @@ class PoolUtils:
             self.__last_orientations = np.roll(self.__last_orientations, -1, axis=0)
             self.__last_orientations[-1] = angle
 
-        point = np.sum(self.__last_positions, axis=0) / self.__size
-        angle = np.sum(self.__last_orientations) / self.__size
+        point = np.sum(self.__last_positions, axis=0) / self.__current_size
+        angle = np.sum(self.__last_orientations) / self.__current_size
 
         return point[0], point[1], angle

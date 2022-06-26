@@ -17,22 +17,21 @@ setup = Setup(camera, pool_dim)
 images = glob.glob('../../images/calibration/*.jpg')
 setup.calibrate_camera([cv2.imread(image_name) for image_name in images])
 
-print("Finished setup")
+print("Finished calibration")
 print()
 
 # Generate LUT to speed up process
 base_image = cv2.imread("../../images/corners/POS4_5_4000_01.jpg")
-img = cv2.imread("../../images/corners/POS4_5_4000_02.jpg")  # This image is read from the camera
+img = cv2.imread("../../images/corners/img4LUT.jpg")  # This image is read from the camera
 
 try:
     lut = setup.generate_lut(base_image, img)
-    np.save("lut", lut)
+    cv2.imshow("lutFullHD", lut)
+    # np.save("lut", lut)
 
     print("LUT generated")
 except AssertionError as e:
     print(e)
 
-# setup.process(base_image, img)
-
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
+cv2.waitKey(0)
+cv2.destroyAllWindows()

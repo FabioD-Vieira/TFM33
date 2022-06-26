@@ -57,7 +57,13 @@ class LUT:
 
         kernel = np.ones((3, 3), np.float32)
         lut = cv2.morphologyEx(lut, cv2.MORPH_CLOSE, kernel)
-
+        # lut[:, :, 1] *= (self.__cam_height - 1)
+        # lut[:, :, 2] *= (self.__cam_width - 1)
+        # lut = np.array(lut, dtype='uint8')
+        # lut = cv2.medianBlur(lut, 15)
+        # lut = np.array(lut, dtype=np.float32)
+        # lut[:, :, 1] /= (self.__cam_height - 1)
+        # lut[:, :, 2] /= (self.__cam_width - 1)
         return lut
 
     def generate_lut(self, base_image, img):

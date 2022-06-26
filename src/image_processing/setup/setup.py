@@ -1,3 +1,5 @@
+import cv2
+
 from src.image_processing.setup.homography import Homography
 from src.image_processing.setup.lut import LUT
 
@@ -19,15 +21,17 @@ class Setup:
     def generate_lut(self, base_image, img):
         return self.__lut.generate_lut(base_image, img)
 
-    # def process(self, base_image, img):
-    #
-    #     base_undistorted = self.__camera.un_distort(base_image)
-    #     undistorted = self.__camera.un_distort(img)
-    #
-    #     base_rotated = cv2.rotate(base_undistorted, cv2.ROTATE_180)
-    #     rotated = cv2.rotate(undistorted, cv2.ROTATE_180)
-    #
-    #     self.homography.calculate_homography_matrix(base_rotated, rotated)
-    #     reprojected = self.homography.apply_homography(rotated)
-    #
-    #     cv2.imshow("reprojected", reprojected)
+    def calculate_homography_matrix(self, base_image, img):
+        base_undistorted = self.__camera.un_distort(base_image)
+        undistorted = self.__camera.un_distort(img)
+
+        base_rotated = cv2.rotate(base_undistorted, cv2.ROTATE_180)
+        rotated = cv2.rotate(undistorted, cv2.ROTATE_180)
+
+        self.homography.calculate_homography_matrix(base_rotated, rotated)
+
+    def no_lut_process(self, image):
+        undistorted = self.__camera.un_distort(image)
+        rotated = cv2.rotate(undistorted, cv2.ROTATE_180)
+
+        return self.homography.apply_homography(rotated)
