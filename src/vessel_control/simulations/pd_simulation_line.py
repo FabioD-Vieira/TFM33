@@ -121,9 +121,9 @@ while running:
         error_vector = (target[0] - vessel_pos[0], target[1] - vessel_pos[1])
         d = math.sqrt((error_vector[0] ** 2) + (error_vector[1] ** 2))
 
-        orientation_diff = abs(target_angle - vessel_orientation)
+        orientation_diff = target_angle - vessel_orientation
 
-        D = d + K_orientation * orientation_diff
+        D = d + K_orientation * abs(orientation_diff)
 
         position_derivative = (d - previous_d) / time_delta
         previous_d = d
