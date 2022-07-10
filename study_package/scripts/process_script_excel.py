@@ -10,7 +10,7 @@ lut = np.load("lut.npy")
 
 process = Process(lut, pool_dim)
 
-cap = cv2.VideoCapture("../../images/videos/vid05.h264")
+cap = cv2.VideoCapture("../../images/videos/vid07.h264")
 
 wb = Workbook()
 sheet1 = wb.add_sheet('Sheet 1')
@@ -36,7 +36,7 @@ while True:
 
         index += 1
 
-wb.save('vessel data.xls')
+wb.save('vid07.xls')
 
 cap.release()
 

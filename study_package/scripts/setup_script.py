@@ -24,10 +24,11 @@ img = cv2.imread("../../images/corners/img4LUT.jpg")  # This image is read from 
 try:
     lut = setup.generate_lut(base_image, img)
     cv2.imshow("lut", lut)
+    np.save("lut1920x1440", lut)
 
-    new_lut = np.array((lut * 255), dtype=np.uint8)
-    result = cv2.addWeighted(img, 1, new_lut, 0.5, 0.0)
-    cv2.imshow("lut_overlay", result)
+    # new_lut = np.array((lut * 255), dtype=np.uint8)
+    # result = cv2.addWeighted(img, 1, new_lut, 0.5, 0.0)
+    # cv2.imshow("lut_overlay", result)
 
 except AssertionError as e:
     print(e)
