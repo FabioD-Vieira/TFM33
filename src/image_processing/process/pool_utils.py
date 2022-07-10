@@ -12,10 +12,15 @@ class PoolUtils:
 
     def __init__(self):
         self.__number_of_samples = 10
-        self.__last_positions = np.zeros((self.__number_of_samples, 2))
-        self.__last_orientations = np.zeros(self.__number_of_samples)
+        self.__last_back_points = np.zeros((self.__number_of_samples, 2))
+        self.__last_front_points = np.zeros((self.__number_of_samples, 2))
+
+        self.__last_back_point = None
+        self.__last_front_point = None
 
         self.__current_size = 0
+
+        self.__position_outlier_threshold = 1
 
     @staticmethod
     def get_points(image):
@@ -30,9 +35,16 @@ class PoolUtils:
         # Find LIGHT in image
         image_channel = image[:, :, RED]
         _, light_mask = cv2.threshold(image_channel, 100, 255, cv2.THRESH_BINARY)
+        # cv2.imshow("light_mask", light_mask)
+
+        # image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        # _, gray_mask = cv2.threshold(image_gray, 100, 255, cv2.THRESH_BINARY)
+        # cv2.imshow("gray_mask", gray_mask)
 
         # Join both masks and find LED contours
         mask = cv2.bitwise_and(red_mask, light_mask)
+        mask = cv2.morphologyEx(mask, cv2.MORPH_DILATE, np.ones((3, 3), np.float32))
+        cv2.imshow("mask", mask)
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         assert len(contours) == 3, "No vessel detected"
@@ -62,26 +74,56 @@ class PoolUtils:
         front = sum(front) / 2
         return back, front
 
-    def get_vessel_info(self, back, front):
+    def __is_outlier(self, last_point, point):
 
-        x, y = (front + back) / 2
+        # diff = last_point - point
+        diff = (last_point[0] - point[0], last_point[1] - point[1])
+        distance = math.sqrt(diff[0] ** 2 + diff[1] ** 2)
 
-        point = (x, y)
-        angle = math.degrees(math.atan2(front[1] - back[1], front[0] - back[0]))
+        return abs(distance) > self.__position_outlier_threshold
 
-        if self.__current_size < self.__number_of_samples:
-            self.__last_positions[self.__current_size] = point
-            self.__last_orientations[self.__current_size] = angle
-            self.__current_size += 1
+    @staticmethod
+    def __get_coord_and_angle(back_point, front_point):
 
-        else:
-            self.__last_positions = np.roll(self.__last_positions, -1, axis=0)
-            self.__last_positions[-1] = point
+        x, y = (front_point + back_point) / 2
+        angle = math.degrees(math.atan2(front_point[1] - back_point[1], front_point[0] - back_point[0]))
 
-            self.__last_orientations = np.roll(self.__last_orientations, -1, axis=0)
-            self.__last_orientations[-1] = angle
+        return x, y, angle
 
-        point = np.sum(self.__last_positions, axis=0) / self.__current_size
-        angle = np.sum(self.__last_orientations) / self.__current_size
+    def get_vessel_info(self, back_point, front_point):
 
-        return point[0], point[1], angle
+        outlier = False
+        if self.__last_back_point is not None:
+
+            if self.__is_outlier(self.__last_back_point, back_point) and \
+                    self.__is_outlier(self.__last_front_point, front_point):
+                self.__last_back_point = back_point
+                self.__last_front_point = front_point
+
+            if self.__is_outlier(self.__last_back_point, back_point):
+                print("back outlier")
+                back_point = self.__last_back_point
+                outlier = True
+
+            if self.__is_outlier(self.__last_front_point, front_point):
+                print("front outlier")
+                front_point = self.__last_front_point
+                outlier = True
+
+        if not outlier:
+            if self.__current_size < self.__number_of_samples:
+                self.__last_back_points[self.__current_size] = back_point
+                self.__last_front_points[self.__current_size] = front_point
+                self.__current_size += 1
+
+            else:
+                self.__last_back_points = np.roll(self.__last_back_points, -1, axis=0)
+                self.__last_back_points[-1] = back_point
+
+                self.__last_front_points = np.roll(self.__last_front_points, -1, axis=0)
+                self.__last_front_points[-1] = front_point
+
+            self.__last_back_point = np.sum(self.__last_back_points, axis=0) / self.__current_size
+            self.__last_front_point = np.sum(self.__last_front_points, axis=0) / self.__current_size
+
+        return PoolUtils.__get_coord_and_angle(self.__last_back_point, self.__last_front_point)

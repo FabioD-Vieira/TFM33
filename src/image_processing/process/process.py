@@ -74,17 +74,17 @@ class Process:
 
     def start_debug(self, image):
 
-        debug_image = np.zeros(image.shape)
+        # debug_image = np.zeros(image.shape)
         debug_image2 = np.zeros(image.shape)
         debug_image3 = np.zeros(image.shape)
 
         try:
             point_a, point_b, point_c = self.__pool_utils.get_points(image)
 
-            debug_image[int(round(point_a[1]))][int(round(point_a[0]))] = (255, 255, 255)
-            debug_image[int(round(point_b[1]))][int(round(point_b[0]))] = (255, 255, 255)
-            debug_image[int(round(point_c[1]))][int(round(point_c[0]))] = (255, 255, 255)
-            cv2.imshow("points", debug_image)
+            # debug_image[int(round(point_a[1]))][int(round(point_a[0]))] = (255, 255, 255)
+            # debug_image[int(round(point_b[1]))][int(round(point_b[0]))] = (255, 255, 255)
+            # debug_image[int(round(point_c[1]))][int(round(point_c[0]))] = (255, 255, 255)
+            # cv2.imshow("points", debug_image)
 
             point_a = self.__apply_lut(point_a)
             point_b = self.__apply_lut(point_b)
@@ -117,7 +117,7 @@ class Process:
             p = (int(round(p[0])), int(round(p[1])))
             p2 = int(round(end_x)), int(round(end_y))
             cv2.arrowedLine(debug_image2, p, p2, (255, 255, 255), 2, tipLength=0.5)
-        # cv2.imwrite("afterLUT.png", debug_image3)
+        # cv2.imshow("afterLUT.png", debug_image3)
         cv2.imshow("arrow", debug_image2)
 
         return self.__last_point, self.__last_angle
