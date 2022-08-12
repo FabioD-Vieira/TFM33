@@ -26,7 +26,7 @@ img = cv2.imread("../../images/corners/img4LUT.jpg")  # This image is read from 
 
 try:
     lut = setup.generate_lut(base_image, img)
-    cv2.imshow("lutFullHD", lut)
+    cv2.imshow("lut", lut)
     # np.save("lut", lut)
 
     print("LUT generated")

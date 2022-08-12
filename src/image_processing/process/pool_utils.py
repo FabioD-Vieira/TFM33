@@ -44,7 +44,6 @@ class PoolUtils:
         # Join both masks and find LED contours
         mask = cv2.bitwise_and(red_mask, light_mask)
         mask = cv2.morphologyEx(mask, cv2.MORPH_DILATE, np.ones((3, 3), np.float32))
-        cv2.imshow("mask", mask)
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         assert len(contours) == 3, "No vessel detected"
