@@ -23,27 +23,27 @@ print("Finished scripts")
 print()
 
 base_image = cv2.imread("../../images/corners/POS4_5_4000_01.jpg")
-img = cv2.imread("../../images/corners/img4LUT_1920x1440.jpg")  # This image is read from the camera
+img = cv2.imread("../../images/corners/img4LUT.jpg")  # This image is read from the camera
 
 setup.calculate_homography_matrix(base_image, img)
 
 
-# image = cv2.imread("../../images/corners/img4LUT.jpg")
-#
-# total = 0
-#
-# for _ in range(10):
-#     start = time.time()
-#
-#     for _ in range(1000):
-#         reprojected = setup.no_lut_process(image)
-#
-#     diff = time.time() - start
-#     print(diff)
-#     total += diff
-#
-# average = total / 10
-# print("Average", average)
+image = cv2.imread("img4LUT_VGA.jpg")
+
+total = 0
+
+for _ in range(10):
+    start = time.time()
+
+    for _ in range(1000):
+        reprojected = setup.no_lut_process(image)
+
+    diff = time.time() - start
+    print(diff)
+    total += diff
+
+average = total / 10
+print("Average", average)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
