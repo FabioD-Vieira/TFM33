@@ -24,10 +24,11 @@ print()
 base_image = cv2.imread("../../images/corners/POS4_5_4000_01.jpg")
 img = cv2.imread("../../images/corners/img4LUT.jpg")  # This image is read from the camera
 
+setup.calculate_homography_matrix(base_image, img)
+
 try:
-    lut = setup.generate_lut(base_image, img)
-    cv2.imshow("lut", lut)
-    # np.save("lut", lut)
+    lut = setup.generate_lut()
+    np.save("lut", lut)
 
     print("LUT generated")
 except AssertionError as e:
