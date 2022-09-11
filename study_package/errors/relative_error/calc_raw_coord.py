@@ -95,8 +95,6 @@ angles = []
 list_of_points = []
 list_of_angles = []
 
-i = 0
-
 while True:
     ret, frame = cap.read()
 
@@ -121,7 +119,6 @@ while True:
             points = []
             angles = []
 
-    i+=1
     cv2.waitKey(1)
 cv2.destroyAllWindows()
 
