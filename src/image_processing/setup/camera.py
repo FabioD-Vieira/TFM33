@@ -49,6 +49,10 @@ class Camera:
         # Update matrix and coefficient variables with calibration
         cv2.fisheye.calibrate(real_world_points, image_points, self.__dim, matrix, coefficients, flags=calib_flags)
 
+        self.__prepare_un_distortion(matrix, coefficients)
+
+    def __prepare_un_distortion(self, matrix, coefficients):
+
         # functions called inside fisheye.undistort but are heavy, so it's best to split them
         new_matrix = cv2.fisheye.estimateNewCameraMatrixForUndistortRectify(matrix, coefficients, self.__dim, np.eye(3),
                                                                             balance=self.__balance)
