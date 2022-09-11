@@ -14,9 +14,7 @@ class Homography:
         self.__sift = cv2.SIFT_create(contrastThreshold=0.01, edgeThreshold=10)
         self.__bf = cv2.BFMatcher()
 
-        self.__RED = 2
-
-    def __find_difference(self, corner_base_img, corner_img):
+    def __find_difference_vector(self, corner_base_img, corner_img):
 
         # detect features in each image and compare them
         kp1, des1 = self.__sift.detectAndCompute(corner_base_img[:, :, 2], None)
@@ -60,22 +58,22 @@ class Homography:
         # and adds the difference to each know corner point
 
         # Top left
-        vector_y, vector_x = self.__find_difference(base_image[150:250, 150:250], image[150:250, 150:250])
+        vector_y, vector_x = self.__find_difference_vector(base_image[150:250, 150:250], image[150:250, 150:250])
         i, j = self.__base_corners[0]
         ay, ax = i + vector_y, j + vector_x
 
         # Top right
-        vector_y, vector_x = self.__find_difference(base_image[150:250, 400:500], image[150:250, 400:500])
+        vector_y, vector_x = self.__find_difference_vector(base_image[150:250, 400:500], image[150:250, 400:500])
         i, j = self.__base_corners[1]
         by, bx = i + vector_y, j + vector_x
 
         # Bottom left
-        vector_y, vector_x = self.__find_difference(base_image[275:375, 0:100], image[275:375, 0:100])
+        vector_y, vector_x = self.__find_difference_vector(base_image[275:375, 0:100], image[275:375, 0:100])
         i, j = self.__base_corners[2]
         cy, cx = i + vector_y, j + vector_x
 
         # Bottom right
-        vector_y, vector_x = self.__find_difference(base_image[270:370, 540:640], image[270:370, 540:640])
+        vector_y, vector_x = self.__find_difference_vector(base_image[270:370, 540:640], image[270:370, 540:640])
         i, j = self.__base_corners[3]
         dy, dx = i + vector_y, j + vector_x
 
