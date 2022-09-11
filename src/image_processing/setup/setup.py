@@ -30,8 +30,8 @@ class Setup:
 
         self.homography.calculate_homography_matrix(base_rotated, rotated)
 
-    def no_lut_process(self, image):
-        undistorted = self.__camera.un_distort(image)
-        rotated = cv2.rotate(undistorted, cv2.ROTATE_180)
-
-        return self.homography.apply_homography(rotated)
+    # def no_lut_process(self, image):
+    #     undistorted = self.__camera.un_distort(image)
+    #     rotated = cv2.rotate(undistorted, cv2.ROTATE_180)
+    #
+    #     return self.homography.apply_homography(rotated)
