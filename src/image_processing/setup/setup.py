@@ -15,9 +15,6 @@ class Setup:
     def calibrate_camera(self, calibration_images):
         self.__camera.calibrate(calibration_images)
 
-    def generate_lut(self):
-        return self.__lut.generate_lut()
-
     def calculate_homography_matrix(self, base_image, img):
         base_undistorted = self.__camera.un_distort(base_image)
         undistorted = self.__camera.un_distort(img)
@@ -26,6 +23,9 @@ class Setup:
         rotated = cv2.rotate(undistorted, cv2.ROTATE_180)
 
         self.homography.calculate_homography_matrix(base_rotated, rotated)
+
+    def generate_lut(self):
+        return self.__lut.generate_lut()
 
     # def no_lut_process(self, image):
     #     undistorted = self.__camera.un_distort(image)
