@@ -1,6 +1,6 @@
 from src.vessel_control.control.PDController import PDController
-from src.vessel_control.control.trajectory import create_curve, create_line
-from src.vessel_control.control.simulation import Simulation
+from src.vessel_control.control.trajectory import create_line
+from src.vessel_control.simulations.simulation import Simulation
 
 pool_dim = (25, 10)
 
