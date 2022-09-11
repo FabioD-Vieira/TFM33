@@ -1,63 +1,36 @@
-import numpy as np
-
-from src.vessel_control.control.p_control import PControl
+from src.vessel_control.control.PDController import PDController
+from src.vessel_control.control.trajectory import create_curve, create_line
+from src.vessel_control.control.simulation import Simulation
 
 pool_dim = (25, 10)
 
-# circle = Circle(number_of_checkpoints=20, radius=3, center=(pool_dim[0]/2, pool_dim[1]/2))
-# vessel_control = PDControl(circle, position_threshold=1, orientation_threshold=1)
-control = PControl(None, position_threshold=1, orientation_threshold=1)
+# trajectory, angles = create_curve()
+trajectory, angles = create_line(pool_dim)
 
-number_of_checkpoints = 1000
 
-line_x = np.linspace(5, 20, number_of_checkpoints)
-print(line_x)
+K_orientation = 0.1
+KP_position = 0.08
+KD_position = 0.08
+AV_power = 20
+AC_max_power = 20
+control = PDController(trajectory, angles, KP_position, KD_position, K_orientation, AV_power, AC_max_power)
 
-line_y = 5
-# line_x = np.array([5, 8, 11, 14, 17, 20])
+simulation = Simulation("", trajectory, pool_dim=pool_dim)
 
-# control.start()
+position = (1, 4)
+orientation = 0
 
-pool_limit_distance = 2
 
-AV = 0
-AC = 0
+def read_pose():
+    return position, orientation
 
-AV_speed = 50
-AC_max_speed = 50
 
-while True:
+running = True
+while running:
+    # read position and orientation
+    position, orientation = read_pose()
 
-    target_y = line_y
+    AV, AC = control.execute(position, orientation)
 
-    # Must be read from somewhere
-    x = 10
-    y = 7
-    angle = 0
-
-    if pool_limit_distance < x < pool_dim[0] - pool_limit_distance and \
-            pool_limit_distance < y < pool_dim[1] - pool_limit_distance:
-        AV = AV_speed
-        AC = control.get_y_output(y, target_y)
-
-    else:
-        AV = 0
-        AC = 0
-
-    if AC > AC_max_speed:
-        AC = AC_max_speed
-
-    elif AC < -AC_max_speed:
-        AC = -AC_max_speed
-
-    if angle > 90 or angle < -90:
-        AC = -AC
-
-    # TODO: increase AC
-
-    left_engine = AV + AC
-    right_engine = AV - AC
-
-    print(left_engine, right_engine)
-
-    break
+    # send data to vessel
+    running, position, orientation = simulation.draw(position, orientation, AV, AC)
