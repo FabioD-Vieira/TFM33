@@ -18,8 +18,8 @@ class Setup:
     def calibrate_camera(self, calibration_images):
         self.__camera.calibrate(calibration_images)
 
-    def generate_lut(self, base_image, img):
-        return self.__lut.generate_lut(base_image, img)
+    def generate_lut(self):
+        return self.__lut.generate_lut()
 
     def calculate_homography_matrix(self, base_image, img):
         base_undistorted = self.__camera.un_distort(base_image)
