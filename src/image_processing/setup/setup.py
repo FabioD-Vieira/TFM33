@@ -1,18 +1,15 @@
 import cv2
 
+from src.image_processing.setup.camera import Camera
 from src.image_processing.setup.homography import Homography
 from src.image_processing.setup.lut import LUT
 
 
 class Setup:
 
-    def __init__(self, camera, pool_dim):
-        self.__camera = camera
-        self.__cam_width, self.__cam_height = self.__camera.dim()
-
-        self.__pool_dim = pool_dim
-
-        self.homography = Homography(self.__camera.dim())
+    def __init__(self, resolution, balance):
+        self.__camera = Camera(resolution, balance)
+        self.homography = Homography(resolution)
         self.__lut = LUT(self.__camera, self.homography)
 
     def calibrate_camera(self, calibration_images):

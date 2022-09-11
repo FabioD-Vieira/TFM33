@@ -3,15 +3,11 @@ import glob
 import cv2
 import numpy as np
 
-from src.image_processing.setup.camera import Camera
 from src.image_processing.setup.setup import Setup
 
 # Initializations
 camera_resolution = (640, 480)
-pool_dim = (25, 10)
-
-camera = Camera(camera_resolution, balance=0.9)
-setup = Setup(camera, pool_dim)
+setup = Setup(camera_resolution, balance=0.9)
 
 # Calibrate system for the camera
 images = glob.glob('../../images/calibration/*.jpg')
