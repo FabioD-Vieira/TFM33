@@ -35,7 +35,6 @@ class PoolUtils:
         # Find LIGHT in image
         image_channel = image[:, :, RED]
         _, light_mask = cv2.threshold(image_channel, 100, 255, cv2.THRESH_BINARY)
-        # cv2.imshow("light_mask", light_mask)
 
         # image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         # _, gray_mask = cv2.threshold(image_gray, 100, 255, cv2.THRESH_BINARY)
