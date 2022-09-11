@@ -3,7 +3,7 @@ import math
 import cv2
 import numpy as np
 
-lut = np.load("../lut.npy")
+lut = np.load("lut.npy")
 
 y_max = 100
 x_max = 250
