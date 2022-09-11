@@ -10,18 +10,6 @@ class LUT:
 
         self.__homography = homography
 
-    # Compute homography matrix using a known image (base_image)
-    # and a new image obtain from the camera
-    def __calculate_homography_matrix(self, base_image, image):
-
-        base_undistorted = self.__camera.un_distort(base_image)
-        base_rotated = cv2.rotate(base_undistorted, cv2.ROTATE_180)
-
-        undistorted = self.__camera.un_distort(image)
-        rotated = cv2.rotate(undistorted, cv2.ROTATE_180)
-
-        self.__homography.calculate_homography_matrix(base_rotated, rotated)
-
     # Created normalized image with each pixel value corresponding to a position: (1, i/479, j/639)
     def __create_normalized_image(self):
 
@@ -66,9 +54,7 @@ class LUT:
         # lut[:, :, 2] /= (self.__cam_width - 1)
         return lut
 
-    def generate_lut(self, base_image, img):
-
-        self.__calculate_homography_matrix(base_image, img)
+    def generate_lut(self):
 
         normalized_image = self.__create_normalized_image()
         normalized_reprojected = self.__apply_image_transformations(normalized_image)
