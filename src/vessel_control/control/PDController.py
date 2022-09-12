@@ -39,6 +39,11 @@ class PDController:
         AC = self.__KP_position * D + self.__KD_position * position_derivative
         AV = self.__AV_power
 
+        if AC > self.__AC_max_power:
+            AC = self.__AC_max_power
+        elif AC < -self.__AC_max_power:
+            AC = -self.__AC_max_power
+
         if error_vector[1] > 0:
             AC = -AC
 

@@ -1,11 +1,11 @@
 from src.vessel_control.control.PDController import PDController
-from src.vessel_control.control.trajectory import create_line
+from src.vessel_control.control.trajectory import create_line, create_curve
 from src.vessel_control.simulations.simulation import Simulation
 
 pool_dim = (25, 10)
 
-# trajectory, angles = create_curve()
-trajectory, angles = create_line(pool_dim)
+trajectory, angles = create_curve()
+# trajectory, angles = create_line(pool_dim)
 
 
 K_orientation = 0.1
