@@ -22,10 +22,8 @@ normalized_image = np.zeros([480, 640, 3], dtype=np.float32)
 for i in range(len(normalized_image)):
     for j in range(len(normalized_image[i])):
         normalized_image[i][j] = (1, i / (480 - 1), j / (640 - 1))
-# cv2.imshow("normalized_image", normalized_image)
 
 reprojected = setup.no_lut_process(normalized_image)
-# cv2.imshow("normalized_reproject", reprojected)
 
 r = cv2.resize(reprojected, (250, 100))
 
@@ -48,21 +46,28 @@ for i in range(99):
         ey[i,j]= 100 / (np.sqrt((pi2-pi)**2+(pj2-pj)**2) + 0.0000001)
 
 ex = cv2.blur(ex, (5, 5))
-ey = cv2.blur(ey, (5, 5))
-
-# ey = ey/10
-ey = np.ceil(ey/10)*10
 ex = np.ceil(ex/10)*10
-ey = ey[:, :249]
 ex = ex[:99]
-# ey = cv2.blur(ey, (3, 3))
+fig1 = plt.figure()
+fig1.suptitle("x (mm)")
+ax = fig1.add_subplot(111)
+c1 = ax.matshow(ex)
+fig1.colorbar(c1, label="mm", location="left")
 
+
+ey = cv2.blur(ey, (5, 5))
+ey = np.ceil(ey/10)*10
+ey = ey[:, :249]
+fig2 = plt.figure()
+fig2.suptitle("y (mm)")
+ax2 = fig2.add_subplot(111)
+c2 = ax2.matshow(ey)
+fig2.colorbar(c2, label="mm", location="left")
+
+fig3 = plt.figure()
+ax3 = fig3.add_subplot(111)
 result = np.maximum(ex[:99], ey[:, :249])
+c3 = ax3.matshow(result)
+fig3.colorbar(c3, label="mm", location="left")
 
-plt.matshow(result)
-plt.matshow(ex)
-plt.matshow(ey)
 plt.show()
-
-cv2.waitKey(0)
-cv2.destroyAllWindows()

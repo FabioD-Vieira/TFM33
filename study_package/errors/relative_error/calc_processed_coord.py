@@ -18,6 +18,7 @@ angles = []
 list_of_points = []
 list_of_angles = []
 
+i = 0
 while True:
     ret, frame = cap.read()
 
@@ -25,6 +26,11 @@ while True:
         break
 
     cv2.imshow("f", frame)
+    # if i == 1370:
+    #     print("write")
+    #     cv2.imwrite("traj6.png",  cv2.rotate(frame, cv2.ROTATE_180))
+
+    i += 1
 
     point, angle = process.start(frame)
 

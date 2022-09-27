@@ -76,8 +76,7 @@ cap = cv2.VideoCapture("../../../images/videos/vid01.h264")
 camera_resolution = (640, 480)
 pool_dim = (25, 10)
 
-camera = Camera(camera_resolution, balance=0.9)
-setup = Setup(camera, pool_dim)
+setup = Setup(camera_resolution, balance=0.9)
 
 images = glob.glob('../../../images/calibration/*.jpg')
 setup.calibrate_camera([cv2.imread(image_name) for image_name in images])
