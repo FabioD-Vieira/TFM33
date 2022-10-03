@@ -3,8 +3,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 # plt.figure(figsize=(10,5))
-plt.xlabel("Saturation")
-plt.ylabel("Hue")
+plt.xlabel("Saturation", fontsize=16)
+plt.ylabel("Hue", fontsize=16)
+plt.xticks(fontsize=16)
+plt.yticks(fontsize=16)
 
 img = np.zeros([180, 255, 3], dtype='uint8')
 

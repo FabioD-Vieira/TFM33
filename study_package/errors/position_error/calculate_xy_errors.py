@@ -49,25 +49,34 @@ ex = cv2.blur(ex, (5, 5))
 ex = np.ceil(ex/10)*10
 ex = ex[:99]
 fig1 = plt.figure()
-fig1.suptitle("x (mm)")
+fig1.suptitle("x (mm)", fontsize=20)
 ax = fig1.add_subplot(111)
+ax.tick_params(labelsize=20)
 c1 = ax.matshow(ex)
-fig1.colorbar(c1, label="mm", location="left")
+cbar1 = fig1.colorbar(c1, location="left")
+cbar1.set_label(label="mm", size=20)
+cbar1.ax.tick_params(labelsize=20)
 
 
 ey = cv2.blur(ey, (5, 5))
 ey = np.ceil(ey/10)*10
 ey = ey[:, :249]
 fig2 = plt.figure()
-fig2.suptitle("y (mm)")
+fig2.suptitle("y (mm)", fontsize=20)
 ax2 = fig2.add_subplot(111)
+ax2.tick_params(labelsize=20)
 c2 = ax2.matshow(ey)
-fig2.colorbar(c2, label="mm", location="left")
+cbar2 = fig2.colorbar(c2, location="left")
+cbar2.set_label(label="mm", size=20)
+cbar2.ax.tick_params(labelsize=20)
 
 fig3 = plt.figure()
 ax3 = fig3.add_subplot(111)
+ax3.tick_params(labelsize=20)
 result = np.maximum(ex[:99], ey[:, :249])
 c3 = ax3.matshow(result)
-fig3.colorbar(c3, label="mm", location="left")
+cbar3 = fig3.colorbar(c3, location="left")
+cbar3.set_label(label="mm", size=20)
+cbar3.ax.tick_params(labelsize=20)
 
 plt.show()
