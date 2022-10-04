@@ -10,9 +10,9 @@ plt.ylim(10)
 ax = plt.gca()
 # ax.invert_yaxis()
 ax.invert_xaxis()
-
-plt.xlabel("m")
-plt.ylabel("m")
+ax.tick_params(labelsize=20)
+plt.xlabel("m", fontsize=20)
+plt.ylabel("m", fontsize=20)
 
 
 def write_text(text, x, x2):

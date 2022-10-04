@@ -59,9 +59,10 @@ result = np.maximum(ex[:99], ey[:, :249])
 c3 = ax3.matshow(result)
 
 ax = plt.gca()
+ax.tick_params(labelsize=20)
 
-plt.xlabel("m")
-plt.ylabel("m")
+plt.xlabel("m", fontsize=20)
+plt.ylabel("m", fontsize=20)
 
 
 def write_text(text, x, x2):
