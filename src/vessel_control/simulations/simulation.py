@@ -20,6 +20,7 @@ class Simulation:
         self.__clock = pygame.time.Clock()
 
         self.__speed = 1  # m/s
+        self.__rotation = 30  # degree/s
 
         self.__running = True
 
@@ -38,8 +39,8 @@ class Simulation:
 
         pygame.display.update()
 
-        left_engine = AV - AC
-        right_engine = AV + AC
+        left_engine = AV + AC
+        right_engine = AV - AC
 
         position, orientation = self.__update_vessel(position, orientation, left_engine, right_engine)
 
@@ -72,9 +73,16 @@ class Simulation:
         return point[0] * (self.__width / self.__pool_dim[0]), point[1] * (self.__height / self.__pool_dim[1])
 
     def __update_vessel(self, pos, orientation, left_eng, right_eng):
-        diff = left_eng - right_eng
 
-        orientation += diff
+        if left_eng > right_eng:
+            s = 1
+        elif right_eng > left_eng:
+            s = -1
+        else:
+            s = 0
+
+        rotation_per_frame = self.__rotation / self.__FPS
+        orientation += s * rotation_per_frame
 
         speed_per_frame = self.__speed / self.__FPS
 

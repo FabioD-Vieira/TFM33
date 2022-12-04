@@ -1,23 +1,24 @@
+from src.vessel_control.control.PController import PController
 from src.vessel_control.control.PDController import PDController
 from src.vessel_control.control.trajectory import create_line, create_curve
 from src.vessel_control.simulations.simulation import Simulation
 
 pool_dim = (25, 10)
+trajectory, angles = create_line(pool_dim)
+# trajectory, angles = create_curve()
 
-trajectory, angles = create_curve()
-# trajectory, angles = create_line(pool_dim)
-
-
-K_orientation = 0.1
-KP_position = 0.08
-KD_position = 0.08
+KP = 0.6
+KD = 0.1
 AV_power = 20
 AC_max_power = 20
-control = PDController(trajectory, angles, KP_position, KD_position, K_orientation, AV_power, AC_max_power)
+# control = PController(trajectory, KP, AV_power, AC_max_power)
+control = PDController(trajectory, KP, KD, AV_power, AC_max_power)
+
 
 simulation = Simulation("", trajectory, pool_dim=pool_dim)
 
-position = (1, 4)
+
+position = (1, 1)
 orientation = 0
 
 
