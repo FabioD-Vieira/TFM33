@@ -19,7 +19,7 @@ class Simulation:
         self.__FPS = 30
         self.__clock = pygame.time.Clock()
 
-        self.__speed = 1  # m/s
+        self.__speed = 2  # m/s
         self.__rotation = 30  # degree/s
 
         self.__running = True
@@ -44,9 +44,9 @@ class Simulation:
 
         position, orientation = self.__update_vessel(position, orientation, left_engine, right_engine)
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.__running = False
+        # for event in pygame.event.get():
+        #     if event.type == pygame.QUIT:
+        #         self.__running = False
 
         return self.__running, position, orientation
 
@@ -63,11 +63,11 @@ class Simulation:
 
     def __draw_old_positions(self):
         for point in self.__old_positions:
-            pygame.draw.circle(self.__screen, (255, 140, 0), self.__convert_point(point), radius=1)
+            pygame.draw.circle(self.__screen, (255, 0, 0), self.__convert_point(point), radius=1)
 
     def __draw_trajectory(self):
         for point in self.__trajectory:
-            pygame.draw.circle(self.__screen, (0, 255, 0), self.__convert_point(point), radius=1)
+            pygame.draw.circle(self.__screen, (255, 140, 0), self.__convert_point(point), radius=1)
 
     def __convert_point(self, point):
         return point[0] * (self.__width / self.__pool_dim[0]), point[1] * (self.__height / self.__pool_dim[1])
@@ -81,6 +81,8 @@ class Simulation:
         else:
             s = 0
 
+        s = s * abs(left_eng - right_eng)
+
         rotation_per_frame = self.__rotation / self.__FPS
         orientation += s * rotation_per_frame
 
@@ -89,6 +91,6 @@ class Simulation:
         new_x = pos[0] + math.cos(math.radians(orientation)) * speed_per_frame
         new_y = pos[1] + math.sin(math.radians(orientation)) * speed_per_frame
 
-        self.__old_positions.append((new_x, new_y))
+        self.__old_positions.append((pos[0], pos[1]))
 
         return (new_x, new_y), orientation

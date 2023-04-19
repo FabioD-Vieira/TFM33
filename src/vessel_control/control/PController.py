@@ -1,9 +1,3 @@
-import math
-from abc import ABC
-
-import numpy as np
-from sklearn.neighbors import NearestNeighbors
-
 from src.vessel_control.control.Controller import Controller
 
 

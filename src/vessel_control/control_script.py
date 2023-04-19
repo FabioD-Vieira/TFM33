@@ -7,18 +7,17 @@ pool_dim = (25, 10)
 trajectory, angles = create_line(pool_dim)
 # trajectory, angles = create_curve()
 
-KP = 0.6
-KD = 0.1
+simulation = Simulation("", trajectory, pool_dim=pool_dim)
+
+KP = 1.0
+KD = 0.4
 AV_power = 20
 AC_max_power = 20
 # control = PController(trajectory, KP, AV_power, AC_max_power)
 control = PDController(trajectory, KP, KD, AV_power, AC_max_power)
 
 
-simulation = Simulation("", trajectory, pool_dim=pool_dim)
-
-
-position = (1, 1)
+position = (1, 3)
 orientation = 0
 
 

@@ -9,8 +9,8 @@ class Setup:
 
     def __init__(self, resolution, balance):
         self.__camera = Camera(resolution, balance)
-        self.homography = Homography(resolution)
-        self.__lut = LUT(self.__camera, self.homography)
+        self.__homography = Homography(resolution)
+        self.__lut = LUT(self.__camera, self.__homography)
 
     def calibrate_camera(self, calibration_images):
         self.__camera.calibrate(calibration_images)
@@ -22,7 +22,7 @@ class Setup:
         base_rotated = cv2.rotate(base_undistorted, cv2.ROTATE_180)
         rotated = cv2.rotate(undistorted, cv2.ROTATE_180)
 
-        self.homography.calculate_homography_matrix(base_rotated, rotated)
+        self.__homography.calculate_homography_matrix(base_rotated, rotated)
 
     def generate_lut(self):
         return self.__lut.generate_lut()

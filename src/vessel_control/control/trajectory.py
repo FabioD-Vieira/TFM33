@@ -40,8 +40,8 @@ def create_line(pool_dim):
     line_init = (0, 5)
     line_angle = 10
 
-    line_end_x = line_init[0] + math.cos(math.radians(line_angle)) * pool_dim[0]
-    line_end_y = line_init[1] + math.sin(math.radians(line_angle)) * pool_dim[1]
+    line_end_x = line_init[0] + math.cos(math.radians(line_angle)) * pool_dim[0]*2
+    line_end_y = line_init[1] + math.sin(math.radians(line_angle)) * pool_dim[1]*2
 
     line_x = np.linspace(line_init[0], line_end_x, number_of_checkpoints)
     line_y = np.linspace(line_init[1], line_end_y, number_of_checkpoints)

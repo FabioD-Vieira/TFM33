@@ -68,29 +68,32 @@ for i in range(len(x2)):
     angle_error = line1_angle - angles[i]
 
     errors[i] = error
-    angle_errors[i] = angle_error
+    angle_errors[i] = abs(angle_error)
 
 ax.axis('equal')
 
-plt.figure()
-plt.tick_params(labelsize=20)
-plt.ylabel("m", fontsize=20)
+fig,ax1 = plt.subplots()
+
+ax1.tick_params(labelsize=20)
+ax1.set_ylabel("m", fontsize=20)
+ax1.set_xlabel("images", fontsize=20)
 plt.plot(errors)
 
-plt.figure()
-plt.tick_params(labelsize=20)
-plt.ylabel("degrees", fontsize=20)
-plt.plot(angle_errors)
+ax2 = ax1.twinx()
+
+ax2.tick_params(labelsize=20)
+ax2.set_ylabel("degrees", fontsize=20, color="r")
+plt.plot(angle_errors, 'r')
 
 print("Distance")
 print("Mean Absolute Error (MAE):", mae(errors))
-print("Mean Squared Error (MSE):", mse(errors))
+# print("Mean Squared Error (MSE):", mse(errors))
 print("Root Mean Squared Error (RMSE): ", rmse(errors))
 
 print()
 print("Angle")
 print("Mean Absolute Error (MAE):", mae(angle_errors))
-print("Mean Squared Error (MSE):", mse(angle_errors))
+# print("Mean Squared Error (MSE):", mse(angle_errors))
 print("Root Mean Squared Error (RMSE): ", rmse(angle_errors))
 
 plt.show()

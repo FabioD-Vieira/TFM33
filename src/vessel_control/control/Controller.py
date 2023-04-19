@@ -8,6 +8,7 @@ from sklearn.neighbors import NearestNeighbors
 class Controller:
     def __init__(self, trajectory, AV, AC_max_power):
         self.trajectory = trajectory
+        # self.angles = angles
 
         self.AV = AV
         self.AC_max_power = AC_max_power
@@ -32,15 +33,17 @@ class Controller:
         elif AC < -self.AC_max_power:
             AC = -self.AC_max_power
 
+        angle_error = 0
+
         # Valor negativo para virar à esquerda quando cruzar a linha
-        if orientation > 90:
-            return self.AV, -1
+        if orientation > 45:
+            return self.AV, -(abs(AC)+1), d + angle_error
 
         # Valor negativo para virar à direita quando cruzar a linha
-        if orientation < -90:
-            return self.AV, 1
+        if orientation < -45:
+            return self.AV, abs(AC)+1, d + angle_error
 
-        return self.AV, AC
+        return self.AV, AC, d + angle_error
 
     @abstractmethod
     def calculate_AC(self, e):

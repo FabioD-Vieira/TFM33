@@ -28,20 +28,20 @@ class PoolUtils:
         # Find RED color in image
         hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-        mask1 = cv2.inRange(hsv_image, (0, 80, 20), (20, 255, 255))
-        mask2 = cv2.inRange(hsv_image, (175, 50, 20), (180, 255, 255))
-        red_mask = cv2.bitwise_or(mask1, mask2)
+        mask1 = cv2.inRange(hsv_image, (0, 80, 100), (20, 255, 255))
+        mask2 = cv2.inRange(hsv_image, (175, 80, 100), (180, 255, 255))
+        mask = cv2.bitwise_or(mask1, mask2)
 
         # Find LIGHT in image
-        image_channel = image[:, :, RED]
-        _, light_mask = cv2.threshold(image_channel, 100, 255, cv2.THRESH_BINARY)
+        # image_channel = image[:, :, RED]
+        # _, light_mask = cv2.threshold(image_channel, 100, 255, cv2.THRESH_BINARY)
 
         # image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         # _, gray_mask = cv2.threshold(image_gray, 100, 255, cv2.THRESH_BINARY)
         # cv2.imshow("gray_mask", gray_mask)
 
         # Join both masks and find LED contours
-        mask = cv2.bitwise_and(red_mask, light_mask)
+        # mask = cv2.bitwise_and(red_mask, light_mask)
         mask = cv2.morphologyEx(mask, cv2.MORPH_DILATE, np.ones((3, 3), np.float32))
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
