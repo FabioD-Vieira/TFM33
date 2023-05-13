@@ -33,17 +33,15 @@ class Controller:
         elif AC < -self.AC_max_power:
             AC = -self.AC_max_power
 
-        angle_error = 0
-
         # Valor negativo para virar à esquerda quando cruzar a linha
         if orientation > 45:
-            return self.AV, -(abs(AC)+1), d + angle_error
+            return self.AV, -(abs(AC)+1)
 
         # Valor negativo para virar à direita quando cruzar a linha
         if orientation < -45:
-            return self.AV, abs(AC)+1, d + angle_error
+            return self.AV, abs(AC)+1
 
-        return self.AV, AC, d + angle_error
+        return self.AV, AC
 
     @abstractmethod
     def calculate_AC(self, e):
